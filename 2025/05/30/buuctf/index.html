@@ -7,7 +7,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xiubi1125.github.io/img/1.jpg">
 <meta property="article:published_time" content="2025-05-30T04:00:00.000Z">
-<meta property="article:modified_time" content="2025-05-29T22:12:30.842Z">
+<meta property="article:modified_time" content="2025-05-29T23:49:32.506Z">
 <meta property="article:author" content="xiubi">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="Writeup">
@@ -19,7 +19,7 @@
   "url": "https://xiubi1125.github.io/2025/05/30/buuctf/",
   "image": "https://xiubi1125.github.io/img/1.jpg",
   "datePublished": "2025-05-30T04:00:00.000Z",
-  "dateModified": "2025-05-29T22:12:30.842Z",
+  "dateModified": "2025-05-29T23:49:32.506Z",
   "author": [
     {
       "@type": "Person",
@@ -182,7 +182,7 @@
     btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
     btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
   }
-})()</script><div id="web_bg" style="background-image: url(/img/qz.jpg);"></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/1.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">休比大王</span></a><a class="nav-page-title" href="/"><span class="site-name">Buu</span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">Buu</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-05-30T04:00:00.000Z" title="发表于 2025-05-30 12:00:00">2025-05-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-05-29T22:12:30.842Z" title="更新于 2025-05-30 06:12:30">2025-05-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/BUUCTF/">BUUCTF</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="buuctf复现"><a href="#buuctf复现" class="headerlink" title="buuctf复现"></a>buuctf复现</h1><h2 id="ACTF2020-新生赛-Include"><a href="#ACTF2020-新生赛-Include" class="headerlink" title="[ACTF2020 新生赛]Include"></a>[ACTF2020 新生赛]Include</h2><p><img src="/2025/05/30/buuctf/Users\xiubi\AppData\Roaming\Typora\typora-user-images\image-20250509192612579.png" alt="image-20250509192612579"></p>
+})()</script><div id="web_bg" style="background-image: url(/img/qz.jpg);"></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/1.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">休比大王</span></a><a class="nav-page-title" href="/"><span class="site-name">Buu</span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">Buu</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-05-30T04:00:00.000Z" title="发表于 2025-05-30 12:00:00">2025-05-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-05-29T23:49:32.506Z" title="更新于 2025-05-30 07:49:32">2025-05-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/BUUCTF/">BUUCTF</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="buuctf复现"><a href="#buuctf复现" class="headerlink" title="buuctf复现"></a>buuctf复现</h1><h2 id="ACTF2020-新生赛-Include"><a href="#ACTF2020-新生赛-Include" class="headerlink" title="[ACTF2020 新生赛]Include"></a>[ACTF2020 新生赛]Include</h2><p><img src="/2025/05/30/buuctf/Users\xiubi\AppData\Roaming\Typora\typora-user-images\image-20250509192612579.png" alt="image-20250509192612579"></p>
 <p>思路只到可以访问敏感文件 想到要用文件包含</p>
 <h3 id="php伪协议"><a href="#php伪协议" class="headerlink" title="php伪协议"></a>php伪协议</h3><p>支持伪协议的函数（文件包含函数）</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">include();引入了一个其他文件到include所在的那个文件里面 源码中有include函数 可以理解为传入的参数可以在后台被成功运行</span><br><span class="line">include_once();</span><br><span class="line">require();</span><br><span class="line">require_once();</span><br></pre></td></tr></table></figure>
@@ -282,6 +282,7 @@
 <p><img src="/2025/05/30/buuctf/Users\xiubi\AppData\Roaming\Typora\typora-user-images\image-20250528212915542.png" alt="image-20250528212915542"></p>
 <p>不知道为什么这里复制下来值不一样 涉及一个<u>弱类型比较</u></p>
 <p>在PHP中：<br>&#x3D; &#x3D; 为弱相等，即当整数和字符串类型相比较时。会先将字符串转化为整数然后再进行比较。比如a&#x3D;123和b&#x3D;123admin456进行&#x3D; &#x3D;比较时。则b只会截取前面的整数部分。即b转化成123。<br>所以，这里的a &#x3D; &#x3D; b是返回True。<br>所以这里我们只需要提供一个参数?key&#x3D;123就可以拿到flag了</p>
+<p><img src="/2025/05/30/buuctf/image-20250530074921489.png" alt="image-20250530074921489"></p>
 <h2 id="组会的东西"><a href="#组会的东西" class="headerlink" title="组会的东西"></a>组会的东西</h2><p><img src="/2025/05/30/buuctf/Users\xiubi\AppData\Roaming\Typora\typora-user-images\image-20250514214409000.png" alt="image-20250514214409000"></p>
 <p>碰到无回显的命令执行漏洞，可以通过dnslog外带来获取命令执行后的结果，从而方便我们来判断命令是否执行成功以及进行更深层次的利用。</p>
 <p>原理将需要查询的值和域名拼接起来，向域名发送请求，DNS在解析的时候会留下日志，读取日志便可以获取信息。</p>
