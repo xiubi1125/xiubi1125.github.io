@@ -6,7 +6,7 @@
   <link href="https://xiubi1125.github.io/atom.xml" rel="self"/>
   
   <link href="https://xiubi1125.github.io/"/>
-  <updated>2025-05-30T11:35:23.281Z</updated>
+  <updated>2025-06-01T01:25:39.902Z</updated>
   <id>https://xiubi1125.github.io/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title></title>
+    <link href="https://xiubi1125.github.io/2025/05/31/%E5%A4%A7%E7%8E%8B%E7%9A%84java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    <id>https://xiubi1125.github.io/2025/05/31/%E5%A4%A7%E7%8E%8B%E7%9A%84java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</id>
+    <published>2025-05-31T15:27:27.999Z</published>
+    <updated>2025-06-01T01:25:39.902Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="大王的java学习日记"><a href="#大王的java学习日记" class="headerlink" title="大王的java学习日记"></a>大王的java学习日记</h1><p>：期末复习时才痛定思痛想起要学习java</p><p>参考笔记《姚哥的java学习日记》</p><h2 id="面向对象（一）习题"><a href="#面向对象（一）习题" class="headerlink" title="面向对象（一）习题"></a>面向对象（一）习题</h2><h3 id="选择"><a href="#选择" class="headerlink" title="选择"></a>选择</h3><p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250601001559986.png" alt="image-20250531234047058"></p><p><strong>重载（Overload）</strong>：指同一类中方法名相同，但参数列表（个数、类型、顺序）不同的现象，与返回值无关。</p><p><strong>隐藏（A）</strong>：子类隐藏父类的静态成员（通过 <code>static</code> 修饰），与方法无关。</p><p><strong>覆盖（B）</strong>：子类重写父类的非静态方法，需满足方法名、参数、返回值完全一致，且权限不能更低。</p><p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250601001613945.png" alt="image-20250601001102053"></p><ul><li><p><strong>类（Class）</strong>：是对象的模板，定义了对象的属性和行为（抽象概念）。</p></li><li><p>对象（Object)：是类的具体实例，通过new关键字创建。例如：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Circle</span> &#123; ... &#125;  </span><br><span class="line"><span class="type">Circle</span> <span class="variable">obj</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Circle</span>(); <span class="comment">// obj 是 Circle 类的实例  </span></span><br></pre></td></tr></table></figure></li></ul><p><img src="C:/Users/xiubi/AppData/Roaming/Typora/typora-user-images/image-20250601092526774.png" alt="image-20250601092526774"></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;大王的java学习日记&quot;&gt;&lt;a href=&quot;#大王的java学习日记&quot; class=&quot;headerlink&quot; title=&quot;大王的java学习日记&quot;&gt;&lt;/a&gt;大王的java学习日记&lt;/h1&gt;&lt;p&gt;：期末复习时才痛定思痛想起要学习java&lt;/p&gt;
+&lt;p&gt;参考笔记《姚</summary>
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>Buu</title>
