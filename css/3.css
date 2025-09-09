@@ -1,0 +1,141 @@
+/* 文章页背景 */
+.layout_post>#post {
+    /* 以下代表透明度为0.7 可以自行修改*/
+    background: rgba(255,255,255,.7);
+}
+ 
+/* 所有页面背景 */
+#aside_content .card-widget, #recent-posts>.recent-post-item, .layout_page>div:first-child:not(.recent-posts), .layout_post>#page, .layout_post>#post, .read-mode .layout_post>#post{
+    /* 以下代表透明度为0.7 */
+    background: rgba(255,255,255,.7);
+}
+/*侧边卡片的透明度 */
+:root {
+  --card-bg: rgba(255, 255, 255, .7);
+}
+/* 页脚透明 */
+#footer {
+	/* 以下代表透明度为0.7 */
+	background: rgba(255,255,255, .0);
+}
+
+
+
+
+
+
+/* 侧边栏个人信息卡片动态渐变色（替换为黄色调） */
+#aside-content>.card-widget.card-info{
+    background: linear-gradient(-45deg, 
+    rgba(255, 249, 230, 0.9),  /* 奶油白 */
+    rgba(255, 245, 215, 0.9), /* 浅奶油色 */
+    rgba(255, 240, 200, 0.85),/* 香槟色 */
+    rgba(255, 235, 190, 0.8));/* 浅金色 */
+}
+[data-theme=dark] #aside-content>.card-widget.card-info {
+    background: linear-gradient(-45deg, 
+    rgba(80, 70, 40, 0.8),     /* 深棕黄 */
+    rgba(95, 85, 50, 0.8),    /* 暗金棕 */
+    rgba(110, 95, 55, 0.8),   /* 深金棕 */
+    rgba(90, 80, 45, 0.8));   /* 棕金色 */
+}
+/* 侧边栏公告栏卡片渐变色（替换为黄色调） */
+#aside-content>.card-widget.card-announcement{
+    background: linear-gradient(-45deg, 
+    rgba(255, 249, 230, 0.9),  /* 奶油白 */
+    rgba(255, 245, 215, 0.9), /* 浅奶油色 */
+    rgba(255, 240, 200, 0.85),/* 香槟色 */
+    rgba(255, 235, 190, 0.8));/* 浅金色 */
+}
+[data-theme=dark] #aside-content>.card-widget.card-announcement {
+    background: linear-gradient(-45deg, 
+    rgba(80, 70, 40, 0.8),     /* 深棕黄 */
+    rgba(95, 85, 50, 0.8),    /* 暗金棕 */
+    rgba(110, 95, 55, 0.8),   /* 深金棕 */
+    rgba(90, 80, 45, 0.8));   /* 棕金色 */
+}
+/* 侧边栏目录最新文章卡片渐变色（替换为黄色调） */
+#aside-content>.sticky_layout>.card-widget{
+    background: linear-gradient(-45deg, 
+    rgba(255, 249, 230, 0.9),  /* 奶油白 */
+    rgba(255, 245, 215, 0.9), /* 浅奶油色 */
+    rgba(255, 240, 200, 0.85),/* 香槟色 */
+    rgba(255, 235, 190, 0.8));/* 浅金色 */
+}
+[data-theme=dark] #aside-content>.sticky_layout>.card-widget{
+    background: linear-gradient(-45deg, 
+    rgba(80, 70, 40, 0.8),     /* 深棕黄 */
+    rgba(95, 85, 50, 0.8),    /* 暗金棕 */
+    rgba(110, 95, 55, 0.8),   /* 深金棕 */
+    rgba(90, 80, 45, 0.8));   /* 棕金色 */
+}
+/* 个人信息Follow me按钮（替换为黄色调） */
+#aside-content>.card-widget.card-info>#card-info-btn {
+    background-color: #d4b66a; /* 高级香槟金（替换原青色） */
+    border-radius: 8px;
+    color: #fff; /* 加白色文字，提升可读性 */
+}
+/*文章页面（若需启用，颜色已替换为黄色调）*/
+/* .layout>#post {
+    background: linear-gradient(-45deg, 
+    rgba(255, 249, 230, 0.9),  /* 奶油白 
+    rgba(255, 245, 215, 0.9), /* 浅奶油色 
+    rgba(255, 240, 200, 0.85),/* 香槟色 
+    rgba(255, 235, 190, 0.8));/* 浅金色 
+}
+
+[data-theme=dark] .layout>#post {
+    background: linear-gradient(-45deg, 
+    rgba(80, 70, 40, 0.8),     /* 深棕黄 
+    rgba(95, 85, 50, 0.8),    /* 暗金棕 
+    rgba(110, 95, 55, 0.8),   /* 深金棕 
+    rgba(90, 80, 45, 0.8));   /* 棕金色 
+} */
+/*主页文章预览页面（替换为黄色调）*/
+#recent-posts>.recent-post-items>.recent-post-item{
+    background: linear-gradient(-45deg, 
+    rgba(255, 251, 240, 0.9),  /* 极浅奶油色 */
+    rgba(255, 248, 230, 0.9), /* 超浅金色 */
+    rgba(255, 245, 220, 0.85),/* 淡香槟色 */
+    rgba(255, 242, 210, 0.8));/* 浅奶油色 */
+    border: 1px solid rgba(255, 230, 150, 0.2); /* 加淡金色边框，更精致 */
+}
+[data-theme=dark] #recent-posts>.recent-post-items>.recent-post-item{
+    background: linear-gradient(-45deg, 
+    rgba(65, 58, 35, 0.8),     /* 深棕黄 */
+    rgba(75, 68, 40, 0.8),    /* 暗金棕 */
+    rgba(85, 78, 45, 0.8),    /* 深金棕 */
+    rgba(70, 63, 38, 0.8));   /* 棕金色 */
+}
+ 
+/*分类页面（替换为黄色调）*/
+.layout>#page {
+    background: linear-gradient(-45deg, 
+    rgba(255, 250, 235, 0.9),  /* 奶油色 */
+    rgba(255, 247, 225, 0.9),  /* 浅奶油色 */
+    rgba(255, 244, 215, 0.85), /* 淡金色 */
+    rgba(255, 241, 205, 0.8)); /* 香槟色 */
+}
+[data-theme=dark] .layout>#page {
+    background: linear-gradient(-45deg, 
+    rgba(55, 48, 25, 0.8),     /* 深棕黄 */
+    rgba(65, 58, 35, 0.9),    /* 暗金棕 */
+    rgba(75, 68, 40, 0.9),    /* 深金棕 */
+    rgba(58, 51, 28, 0.8));   /* 棕金色 */
+}
+ 
+/*时间轴页面（替换为黄色调）*/
+.layout>#archive {
+    background: linear-gradient(-45deg, 
+    rgba(255, 250, 235, 0.9),  /* 奶油色 */
+    rgba(255, 247, 225, 0.9),  /* 浅奶油色 */
+    rgba(255, 244, 215, 0.85), /* 淡金色 */
+    rgba(255, 241, 205, 0.8)); /* 香槟色 */
+}
+[data-theme=dark] .layout>#archive {
+    background: linear-gradient(-45deg, 
+    rgba(55, 48, 25, 0.8),     /* 深棕黄 */
+    rgba(65, 58, 35, 0.9),    /* 暗金棕 */
+    rgba(75, 68, 40, 0.9),    /* 深金棕 */
+    rgba(58, 51, 28, 0.8));   /* 棕金色 */
+}
