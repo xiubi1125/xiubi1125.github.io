@@ -1,0 +1,346 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>ssh私钥泄露靶场 | 休比大王</title><meta name="author" content="xiubi"><meta name="copyright" content="xiubi"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="ssh私钥泄露靶场靶场镜像：链接: https://pan.baidu.com/s/1xfKILyIzELi_ZgUw4aXT7w 提取码: 59g0 直接导入虚拟机  这里我们不知道账号密码 也没办法查看ip 所以通过另一台kali虚拟机中的工具探测同网段的ip ip addr查看ip  1netdiscover -r 192.168.198.0   知道靶场的ip之后进行nmap扫描查看开放的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ssh私钥泄露靶场">
+<meta property="og:url" content="https://xiubi1125.github.io/2025/09/16/%E6%94%BB%E9%98%B2%E7%BB%83%E4%B9%A0%E4%B9%8Bssh%E7%A7%81%E9%92%A5%E6%B3%84%E9%9C%B2/index.html">
+<meta property="og:site_name" content="休比大王">
+<meta property="og:description" content="ssh私钥泄露靶场靶场镜像：链接: https://pan.baidu.com/s/1xfKILyIzELi_ZgUw4aXT7w 提取码: 59g0 直接导入虚拟机  这里我们不知道账号密码 也没办法查看ip 所以通过另一台kali虚拟机中的工具探测同网段的ip ip addr查看ip  1netdiscover -r 192.168.198.0   知道靶场的ip之后进行nmap扫描查看开放的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xiubi1125.github.io/img/ssh.jpg">
+<meta property="article:published_time" content="2025-09-16T10:19:31.274Z">
+<meta property="article:modified_time" content="2025-09-16T10:19:31.781Z">
+<meta property="article:author" content="xiubi">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://xiubi1125.github.io/img/ssh.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "ssh私钥泄露靶场",
+  "url": "https://xiubi1125.github.io/2025/09/16/%E6%94%BB%E9%98%B2%E7%BB%83%E4%B9%A0%E4%B9%8Bssh%E7%A7%81%E9%92%A5%E6%B3%84%E9%9C%B2/",
+  "image": "https://xiubi1125.github.io/img/ssh.jpg",
+  "datePublished": "2025-09-16T10:19:31.274Z",
+  "dateModified": "2025-09-16T10:19:31.781Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xiubi",
+      "url": "https://xiubi1125.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/dancing.png"><link rel="canonical" href="https://xiubi1125.github.io/2025/09/16/%E6%94%BB%E9%98%B2%E7%BB%83%E4%B9%A0%E4%B9%8Bssh%E7%A7%81%E9%92%A5%E6%B3%84%E9%9C%B2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="//busuanzi.ibruce.info"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'ssh私钥泄露靶场',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/modify.css"><link rel="stylesheet" href="/css/1.css"><link rel="stylesheet" href="/css/2.css"><link rel="stylesheet" href="/css/3.css"><link rel="stylesheet" href="/css/4.css"><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="休比大王" type="application/atom+xml">
+</head><body><div id="web_bg" style="background-image: url(/img/qz.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/tx.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="avatar"></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 家</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 老酒街</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw far fa-comments"></i><span> 夜雨</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/ssh.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/dancing.png" alt="Logo"><span class="site-name">休比大王</span></a><a class="nav-page-title" href="/"><span class="site-name">ssh私钥泄露靶场</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 家</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 老酒街</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw far fa-comments"></i><span> 夜雨</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">ssh私钥泄露靶场</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-09-16T10:19:31.274Z" title="发表于 2025-09-16 18:19:31">2025-09-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-09-16T10:19:31.781Z" title="更新于 2025-09-16 18:19:31">2025-09-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%9D%B6%E5%9C%BA%E7%B3%BB%E5%88%97/">靶场系列</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><div class="top-img" style="background-image: url(/img/ssh.jpg);"></div><article class="container post-content" id="article-container"><h1 id="ssh私钥泄露靶场"><a href="#ssh私钥泄露靶场" class="headerlink" title="ssh私钥泄露靶场"></a>ssh私钥泄露靶场</h1><p>靶场镜像：链接: <a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1xfKILyIzELi_ZgUw4aXT7w">https://pan.baidu.com/s/1xfKILyIzELi_ZgUw4aXT7w</a> 提取码: 59g0</p>
+<p>直接导入虚拟机</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250915210853959.png" alt="image-20250915210828581"></p>
+<p>这里我们不知道账号密码 也没办法查看ip 所以通过另一台kali虚拟机中的工具探测同网段的ip</p>
+<p>ip addr查看ip</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916081742713.png" alt="image-20250916081742538"></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netdiscover -r 192.168.198.0</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="/../../../AppData/Roaming/Typora/typora-user-images/image-20250916082117269.png" alt="image-20250916082117269"></p>
+<p>知道靶场的ip之后进行nmap扫描查看开放的端口</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sV 192.168.198.135 </span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916082949168.png" alt="image-20250916082949092"></p>
+<p>可以看到在这个把厂商开放的端口和对应服务</p>
+<p>这里开启了ssh服务和两个http服务</p>
+<h2 id="分析特殊端口"><a href="#分析特殊端口" class="headerlink" title="分析特殊端口"></a>分析特殊端口</h2><p>一个80端口一个31337端口</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916083449668.png" alt="image-20250916083449503"></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916083654169.png"></p>
+<p>直接访问无事发生</p>
+<p>所以知道端口之后我们用drrb暴力破解目录(dirb比较快)</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916083719171.png" alt="image-20250916083719018"></p>
+<p>可以看到有两个敏感文件 我们先尝试访问robots.txt爬虫文件</p>
+<p><code>robots.txt</code>（位于站点根目录，如 <code>https://example.com/robots.txt</code>）是网站给搜索引擎爬虫（robots / crawlers）的一份<strong>礼貌性指令文件</strong>，告诉爬虫哪些路径可以抓取、哪些路径请跳过。</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916083925046.png" alt="image-20250916083924979"></p>
+<p>前面两个都是一些配置文件 所以我们把重点放在taxes</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916094946308.png" alt="image-20250916094946214"></p>
+<h2 id="私钥泄露"><a href="#私钥泄露" class="headerlink" title="私钥泄露"></a>私钥泄露</h2><p>访问ssh目录</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916095606033.png" alt="image-20250916095605962"></p>
+<p>这个是rsa的私钥和公钥信息</p>
+<h3 id="id-rsa"><a href="#id-rsa" class="headerlink" title="id_rsa"></a>id_rsa</h3><p>私钥:</p>
+<p>任何持有这个文件的人都能（在配套公钥已被放到目标 <code>authorized_keys</code> 时）作为该用户登录目标主机。</p>
+<h3 id="id-rsa-pub"><a href="#id-rsa-pub" class="headerlink" title="id_rsa.pub"></a>id_rsa.pub</h3><p>对应的公钥：</p>
+<p>可以公开分发的，用来放到远程主机的 <code>~/.ssh/authorized_keys</code> 中以允许对应私钥免密登录。</p>
+<h3 id="authorized-keys"><a href="#authorized-keys" class="headerlink" title="authorized_keys"></a>authorized_keys</h3><p>存在于远程账号的 <code>~/.ssh/authorized_keys</code>，文件内每一行是一把允许登录该账号的<strong>公钥</strong>（可以有选项限制该 key 的权限</p>
+<p>所以我们先选择查看一下公钥</p>
+<p>访问<a target="_blank" rel="noopener" href="http://192.168.198.135:31337/.ssh/id_rsa.pub">http://192.168.198.135:31337/.ssh/id_rsa.pub</a> </p>
+<p>下载</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916100937443.png" alt="image-20250916100937405"></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916100850724.png" alt="image-20250916100850627"></p>
+<p>拿到用户名</p>
+<p>然后我们下载私钥看一下</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916101302343.png" alt="image-20250916101302265"></p>
+<p>发现这是被加密保护的私钥</p>
+<p>Proc-Type: 4,ENCRYPTED表示它需要口令才能解密使用</p>
+<p>回到kali</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916105218983.png" alt="image-20250916105218585"></p>
+<p>记得登陆前看一下是否可以读写</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916110551253.png" alt="image-20250916110551188"></p>
+<p>可以的</p>
+<p>下一步我们尝试登录</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -i id_rsa用户名@主机名</span><br></pre></td></tr></tbody></table></figure>
+
+<p><code>ssh</code>：安全远程登录命令。</p>
+<p><code>-i id_rsa</code>：指定要使用的私钥文件（默认是 <code>~/.ssh/id_rsa</code>，这里强制用当前目录下的 <code>id_rsa</code>）。</p>
+<p><code>用户名</code>：你要登录远程主机的账号 这里就是我们刚刚拿到的用户名。</p>
+<p><code>@主机名</code>：远程主机的地址</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -i id_rsa simon@192.168.198.135 </span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916112120474.png" alt="image-20250916112120290"></p>
+<p>这里下一步是修改权限为600</p>
+<p>可以看到原来的权限是这样的</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-rw-r--r--   （= 644）</span><br></pre></td></tr></tbody></table></figure>
+
+<p>拥有者：可读写</p>
+<p>群组：可读</p>
+<p>其他用户：可读</p>
+<p>我们要修改为600</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-rw-------   （= 600）</span><br></pre></td></tr></tbody></table></figure>
+
+<p>拥有者：可读写</p>
+<p>群组：无权限</p>
+<p>其他用户：无权限</p>
+<h3 id="为什么-SSH-要求-600？"><a href="#为什么-SSH-要求-600？" class="headerlink" title="为什么 SSH 要求 600？"></a>为什么 SSH 要求 600？</h3><p>OpenSSH 在加载私钥时会检查文件的权限，如果不是“只有文件拥有者能读写”，就会拒绝使用，报错类似：</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</span></span><br><span class="line"><span class="meta">@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @</span></span><br><span class="line"><span class="meta">@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</span></span><br><span class="line">Permissions 0644 <span class="keyword">for</span> <span class="string">'id_rsa'</span> are too <span class="built_in">open</span>.</span><br></pre></td></tr></tbody></table></figure>
+
+<p>修改私钥权限</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 600 id_rsa</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916115427874.png" alt="image-20250916115427816"></p>
+<h3 id="密钥信息破解"><a href="#密钥信息破解" class="headerlink" title="密钥信息破解"></a>密钥信息破解</h3><p>这里我们对私钥信息进行破解，首先使用ssh2john将id_isa密钥信息转换成john可识别的信息 <code>ssh2john id_isa &gt; isacrack</code> 然后利用字典进行逐步解密，这时候用zcat 来将字典读取通过管道符 传入john 来解密</p>
+<p>具体实现步骤</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh2john id_rsa &gt; isacrack</span><br></pre></td></tr></tbody></table></figure>
+
+<p>使用 ssh2john 工具将私钥文件转换为 john 可识别的格式</p>
+<p>这个命令会读取<code>id_isa</code>私钥文件，将其转换为适合 john 破解的哈希格式，并保存到<code>isacrack</code>文件中。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zcat /usr/share/wordlists/rockyou.txt.gz | john --pipe isacrack</span><br></pre></td></tr></tbody></table></figure>
+
+<p>使用 zcat 读取压缩的字典文件，并通过管道传递给 john 进行破解</p>
+<p>破解结果如图</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916133937322.png" alt="image-20250916133937254"></p>
+<p>成功得到密码为starwars</p>
+<p>然后我们回到靶场进行登录</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916134109401.png" alt="image-20250916134109332"></p>
+<p>成功登录</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916134529012.png" alt="image-20250916134528869"></p>
+<p>大概尝试一些命令寻找有用文件</p>
+<p>可以看到root目录下有flag.txt</p>
+<p>查看一下</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916134608339.png" alt="image-20250916134608292"></p>
+<p>果然 没权限不让我们读</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916175915142.png" alt="image-20250916175915089"></p>
+<p>根据这个我们可以看出来</p>
+<p>flag.txt<code>属主和属组都是</code>root，且权限为 <code>-rw-------</code>，只有 <code>root</code> 用户能读。当前用户是 simon</p>
+<p>然后这有个c语言源文件 看一下试试</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916180202126.png" alt="image-20250916180202044"></p>
+<p>这里有flag2</p>
+<h3 id="gets函数的缓冲区溢出漏洞"><a href="#gets函数的缓冲区溢出漏洞" class="headerlink" title="gets函数的缓冲区溢出漏洞"></a>gets函数的缓冲区溢出漏洞</h3><p>代码中定义了<code>char name[10];</code>的缓冲区，却使用<code>gets(name);</code>读取输入 ——gets函数不会检查输入长度，当输入超过 10 个字符时，会导致缓冲区溢出，覆盖栈内存中的其他数据。</p>
+<p>程序逻辑中存在对name的判断（比较前 5 个字符是否为 “Simon”），若满足条件会执行/usr/local/sbin/message程序。</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916180827060.png" alt="image-20250916180826995"></p>
+<p>执行一下看看</p>
+<p>下一步试着更多输入使其移除</p>
+<p>（缓冲区溢出漏洞 + SUID 权限滥用）</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250916181142848.png" alt="image-20250916181142769"></p>
+<p>前二十位是我们填充的 超出的部分就是root权限的目录路径</p>
+<p>原理：</p>
+<p><strong>缓冲区溢出覆盖了程序执行流程中关键的内存数据</strong></p>
+<p>我们输入的目录路径是可执行的 shell 路径，结合溢出覆盖的逻辑，可能发生了两种情况</p>
+<h4 id="1-覆盖返回地址到system函数"><a href="#1-覆盖返回地址到system函数" class="headerlink" title="1.覆盖返回地址到system函数"></a>1.覆盖返回地址到<code>system</code>函数</h4><h4 id="2-覆盖程序内的判断逻辑"><a href="#2-覆盖程序内的判断逻辑" class="headerlink" title="2.覆盖程序内的判断逻辑"></a>2.<strong>覆盖程序内的判断逻辑</strong></h4><p>得到三个flag 完成</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://xiubi1125.github.io">xiubi</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://xiubi1125.github.io/2025/09/16/%E6%94%BB%E9%98%B2%E7%BB%83%E4%B9%A0%E4%B9%8Bssh%E7%A7%81%E9%92%A5%E6%B3%84%E9%9C%B2/">https://xiubi1125.github.io/2025/09/16/%E6%94%BB%E9%98%B2%E7%BB%83%E4%B9%A0%E4%B9%8Bssh%E7%A7%81%E9%92%A5%E6%B3%84%E9%9C%B2/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://xiubi1125.github.io" target="_blank">休比大王</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/ssh.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer=""></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/09/10/%E5%88%A9%E7%94%A8pearcmd.php%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" title="利用pearcmd.php本地文件包含姿势学习"><img class="cover" src="/img/pearcmd.jpg" onerror="onerror=null;src='/img/yu.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">利用pearcmd.php本地文件包含姿势学习</div></div><div class="info-2"><div class="info-item-1">利用pearcmd.php本地文件包含在newstart23 week3碰到的一个题 register_argc_argv打开的情况 之前没遇到过 学一下  复现过程环境用docker搭建lamp 命令： 123456789101112mkdir lamp-docker &amp;&amp; cd lamp-dockertouch docker-compose.ymlnano docker-compose.ymlmkdir www//创建web目录echo "&lt;?php phpinfo(); ?&gt;" &gt; www/index.phpdocker-compose up -d//启动容器docker ps//检查容器ip addr//查看地址Web: http://192.168.198.131:8080phpMyAdmin:...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/tx.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="avatar"></div><div class="author-info-name">xiubi</div><div class="author-info-description">或许最低落笔峰都能与光相逢</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">小小的不如意是在为大大的幸福做铺垫ദ്ദി˶ᕑᗢᓫ)✧</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ssh%E7%A7%81%E9%92%A5%E6%B3%84%E9%9C%B2%E9%9D%B6%E5%9C%BA"><span class="toc-number">1.</span> <span class="toc-text">ssh私钥泄露靶场</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E7%89%B9%E6%AE%8A%E7%AB%AF%E5%8F%A3"><span class="toc-number">1.1.</span> <span class="toc-text">分析特殊端口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A7%81%E9%92%A5%E6%B3%84%E9%9C%B2"><span class="toc-number">1.2.</span> <span class="toc-text">私钥泄露</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#id-rsa"><span class="toc-number">1.2.1.</span> <span class="toc-text">id_rsa</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#id-rsa-pub"><span class="toc-number">1.2.2.</span> <span class="toc-text">id_rsa.pub</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#authorized-keys"><span class="toc-number">1.2.3.</span> <span class="toc-text">authorized_keys</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-SSH-%E8%A6%81%E6%B1%82-600%EF%BC%9F"><span class="toc-number">1.2.4.</span> <span class="toc-text">为什么 SSH 要求 600？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%86%E9%92%A5%E4%BF%A1%E6%81%AF%E7%A0%B4%E8%A7%A3"><span class="toc-number">1.2.5.</span> <span class="toc-text">密钥信息破解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gets%E5%87%BD%E6%95%B0%E7%9A%84%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.2.6.</span> <span class="toc-text">gets函数的缓冲区溢出漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%A6%86%E7%9B%96%E8%BF%94%E5%9B%9E%E5%9C%B0%E5%9D%80%E5%88%B0system%E5%87%BD%E6%95%B0"><span class="toc-number">1.2.6.1.</span> <span class="toc-text">1.覆盖返回地址到system函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%A6%86%E7%9B%96%E7%A8%8B%E5%BA%8F%E5%86%85%E7%9A%84%E5%88%A4%E6%96%AD%E9%80%BB%E8%BE%91"><span class="toc-number">1.2.6.2.</span> <span class="toc-text">2.覆盖程序内的判断逻辑</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/09/16/%E6%94%BB%E9%98%B2%E7%BB%83%E4%B9%A0%E4%B9%8Bssh%E7%A7%81%E9%92%A5%E6%B3%84%E9%9C%B2/" title="ssh私钥泄露靶场"><img src="/img/ssh.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="ssh私钥泄露靶场"></a><div class="content"><a class="title" href="/2025/09/16/%E6%94%BB%E9%98%B2%E7%BB%83%E4%B9%A0%E4%B9%8Bssh%E7%A7%81%E9%92%A5%E6%B3%84%E9%9C%B2/" title="ssh私钥泄露靶场">ssh私钥泄露靶场</a><time datetime="2025-09-16T10:19:31.274Z" title="发表于 2025-09-16 18:19:31">2025-09-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/10/%E5%88%A9%E7%94%A8pearcmd.php%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" title="利用pearcmd.php本地文件包含姿势学习"><img src="/img/pearcmd.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="利用pearcmd.php本地文件包含姿势学习"></a><div class="content"><a class="title" href="/2025/09/10/%E5%88%A9%E7%94%A8pearcmd.php%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" title="利用pearcmd.php本地文件包含姿势学习">利用pearcmd.php本地文件包含姿势学习</a><time datetime="2025-09-10T12:48:27.520Z" title="发表于 2025-09-10 20:48:27">2025-09-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/09/%E2%80%9C%5BNewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93%5DWEEK2--web%E6%96%B9%E5%90%91%E5%A4%8D%E7%8E%B0%E8%AE%B0%E5%BD%95%E2%80%9D/" title="“[NewStarCTF 2023 公开赛道]WEEK2--web方向复现记录”"><img src="/img/newstar2.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="“[NewStarCTF 2023 公开赛道]WEEK2--web方向复现记录”"></a><div class="content"><a class="title" href="/2025/09/09/%E2%80%9C%5BNewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93%5DWEEK2--web%E6%96%B9%E5%90%91%E5%A4%8D%E7%8E%B0%E8%AE%B0%E5%BD%95%E2%80%9D/" title="“[NewStarCTF 2023 公开赛道]WEEK2--web方向复现记录”">“[NewStarCTF 2023 公开赛道]WEEK2--web方向复现记录”</a><time datetime="2025-09-09T12:18:14.606Z" title="发表于 2025-09-09 20:18:14">2025-09-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/04/%5BNewStarCTF%202023%20%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93%5D--Web%E6%96%B9%E5%90%91%E5%A4%8D%E7%8E%B0%E8%AE%B0%E5%BD%95/" title="“[NewStarCTF 2023 公开赛道]WEEK1--web方向复现记录”"><img src="/img/newstar.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="“[NewStarCTF 2023 公开赛道]WEEK1--web方向复现记录”"></a><div class="content"><a class="title" href="/2025/09/04/%5BNewStarCTF%202023%20%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93%5D--Web%E6%96%B9%E5%90%91%E5%A4%8D%E7%8E%B0%E8%AE%B0%E5%BD%95/" title="“[NewStarCTF 2023 公开赛道]WEEK1--web方向复现记录”">“[NewStarCTF 2023 公开赛道]WEEK1--web方向复现记录”</a><time datetime="2025-09-04T13:39:25.058Z" title="发表于 2025-09-04 21:39:25">2025-09-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/04/SSTI%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5%E5%AD%A6%E4%B9%A0%E5%B0%8F%E8%AE%B0/" title="SSTI模板注入学习小记"><img src="/img/ssti.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="SSTI模板注入学习小记"></a><div class="content"><a class="title" href="/2025/09/04/SSTI%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5%E5%AD%A6%E4%B9%A0%E5%B0%8F%E8%AE%B0/" title="SSTI模板注入学习小记">SSTI模板注入学习小记</a><time datetime="2025-09-04T09:54:42.337Z" title="发表于 2025-09-04 17:54:42">2025-09-04</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent;"><div id="footer-wrap"><div class="copyright">©2019 - 2025 By xiubi</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.5</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><canvas id="snow"></canvas><script src="/js/font.js</script)<script"></script><script async="" src="/js/title.js"></script><meting-js class="no-destroy" id="14171279957" server="netease" type="playlist" fixed="true" autoplay="true" order="random" volume="0.3" list-folded="false" list-max-height="36vh"> </meting-js><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><link rel="stylesheet" href="https://npm.elemecdn.com/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://npm.elemecdn.com/aplayer/dist/APlayer.min.js"></script><script src="https://npm.elemecdn.com/meting/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      false 
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async="" data-pjax="" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
