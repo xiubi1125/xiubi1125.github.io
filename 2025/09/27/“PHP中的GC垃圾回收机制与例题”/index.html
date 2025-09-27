@@ -1,0 +1,322 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>“PHP中的GC垃圾回收机制” | 休比大王</title><meta name="author" content="xiubi"><meta name="copyright" content="xiubi"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="PHP中的GC垃圾回收机制什么是GCGc，全称Garbage collection，即垃圾回收机制。 主要用于自动回收不再使用的内存，特别是用来管理引用计数机制下的内存回收。当 PHP 脚本执行时，垃圾回收会自动清理不再使用的对象和变量，以避免内存泄漏。 PHP 使用了 **引用计数 ** 和 **回收周期 ** 的结合来管理内存。 引用计数为了理解这个引用计数的实现 我们需要了解一下zval">
+<meta property="og:type" content="article">
+<meta property="og:title" content="“PHP中的GC垃圾回收机制”">
+<meta property="og:url" content="https://xiubi1125.github.io/2025/09/27/%E2%80%9CPHP%E4%B8%AD%E7%9A%84GC%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E4%B8%8E%E4%BE%8B%E9%A2%98%E2%80%9D/index.html">
+<meta property="og:site_name" content="休比大王">
+<meta property="og:description" content="PHP中的GC垃圾回收机制什么是GCGc，全称Garbage collection，即垃圾回收机制。 主要用于自动回收不再使用的内存，特别是用来管理引用计数机制下的内存回收。当 PHP 脚本执行时，垃圾回收会自动清理不再使用的对象和变量，以避免内存泄漏。 PHP 使用了 **引用计数 ** 和 **回收周期 ** 的结合来管理内存。 引用计数为了理解这个引用计数的实现 我们需要了解一下zval">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xiubi1125.github.io/img/GC.jpg">
+<meta property="article:published_time" content="2025-09-27T06:58:46.081Z">
+<meta property="article:modified_time" content="2025-09-27T09:36:06.221Z">
+<meta property="article:author" content="xiubi">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://xiubi1125.github.io/img/GC.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "“PHP中的GC垃圾回收机制”",
+  "url": "https://xiubi1125.github.io/2025/09/27/%E2%80%9CPHP%E4%B8%AD%E7%9A%84GC%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E4%B8%8E%E4%BE%8B%E9%A2%98%E2%80%9D/",
+  "image": "https://xiubi1125.github.io/img/GC.jpg",
+  "datePublished": "2025-09-27T06:58:46.081Z",
+  "dateModified": "2025-09-27T09:36:06.221Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xiubi",
+      "url": "https://xiubi1125.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/dancing.png"><link rel="canonical" href="https://xiubi1125.github.io/2025/09/27/%E2%80%9CPHP%E4%B8%AD%E7%9A%84GC%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E4%B8%8E%E4%BE%8B%E9%A2%98%E2%80%9D/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="//busuanzi.ibruce.info"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '“PHP中的GC垃圾回收机制”',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/modify.css"><link rel="stylesheet" href="/css/1.css"><link rel="stylesheet" href="/css/2.css"><link rel="stylesheet" href="/css/3.css"><link rel="stylesheet" href="/css/4.css"><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="休比大王" type="application/atom+xml">
+</head><body><div id="web_bg" style="background-image: url(/img/qz.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/tx.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="avatar"></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 家</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 老酒街</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw far fa-comments"></i><span> 夜雨</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/GC.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/dancing.png" alt="Logo"><span class="site-name">休比大王</span></a><a class="nav-page-title" href="/"><span class="site-name">“PHP中的GC垃圾回收机制”</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 家</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 老酒街</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw far fa-comments"></i><span> 夜雨</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">“PHP中的GC垃圾回收机制”</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-09-27T06:58:46.081Z" title="发表于 2025-09-27 14:58:46">2025-09-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-09-27T09:36:06.221Z" title="更新于 2025-09-27 17:36:06">2025-09-27</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E4%B9%B1%E4%B8%83%E5%85%AB%E7%B3%9F/">乱七八糟</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><div class="top-img" style="background-image: url(/img/GC.jpg);"></div><article class="container post-content" id="article-container"><hr>
+<h1 id="PHP中的GC垃圾回收机制"><a href="#PHP中的GC垃圾回收机制" class="headerlink" title="PHP中的GC垃圾回收机制"></a>PHP中的GC垃圾回收机制</h1><h2 id="什么是GC"><a href="#什么是GC" class="headerlink" title="什么是GC"></a>什么是GC</h2><p><code>Gc</code>，全称<code>Garbage collection</code>，即垃圾回收机制。</p>
+<p>主要用于自动回收不再使用的内存，特别是用来管理引用计数机制下的内存回收。当 PHP 脚本执行时，垃圾回收会自动清理不再使用的对象和变量，以避免内存泄漏。</p>
+<p>PHP 使用了 **引用计数 ** 和 **回收周期 ** 的结合来管理内存。</p>
+<h3 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h3><p>为了理解这个引用计数的实现 我们需要了解一下zval 变量容器的工作原理</p>
+<h4 id="zval-容器"><a href="#zval-容器" class="headerlink" title="zval 容器"></a>zval 容器</h4><p>zval 容器是 PHP 内部用来存储变量信息的数据结构，除了存储变量的值外，它还包含了与该变量相关的额外信息，例如变量的类型、引用计数等。</p>
+<p> 在 PHP 中，所有的变量都会被封装在一个名为 <code>zval</code> 的容器中，<code>zval</code> 是一个结构体，包含以下几个关键部分：</p>
+<p><strong>类型</strong>：变量的类型（例如整数、字符串、数组、对象等）。<strong>值</strong>：变量存储的具体值。</p>
+<p><strong>引用计数 (<code>refcount</code>)</strong>：指向该 <code>zval</code> 容器的引用数量，表示有多少个变量或引用指向此 <code>zval</code>。这是个bool值 用来标识这个变量是否属于引用集合</p>
+<p><strong>引用标志 (<code>is_ref</code>)</strong>：用于标识该变量是否为引用。PHP 引擎通过这个标志来区分普通变量和引用变量。</p>
+<p>大概长这样</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zval_struct</span> {</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span> {</span></span><br><span class="line">        <span class="type">long</span> lval;    <span class="comment">// 长整型值</span></span><br><span class="line">        <span class="type">double</span> dval;  <span class="comment">// 双精度浮点型值</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> {</span></span><br><span class="line">            <span class="type">char</span> *val;   <span class="comment">// 字符串的值</span></span><br><span class="line">            <span class="type">int</span> len;     <span class="comment">// 字符串长度</span></span><br><span class="line">        } str;</span><br><span class="line">        zval *obj;   <span class="comment">// 对象指针</span></span><br><span class="line">    } value;</span><br><span class="line">    uint refcount;    <span class="comment">// 引用计数</span></span><br><span class="line">    uint is_ref:<span class="number">1</span>;    <span class="comment">// 是否为引用</span></span><br><span class="line">} zval;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>比较重要的是<code>is_ref</code> 和 <code>refcount</code> 字段</p>
+<p>  <strong><code>is_ref</code>（引用标志）</strong>：</p>
+<p><code>is_ref</code> 是一个布尔值，用于标识当前 <code>zval</code> 是否为引用。如果 <code>is_ref</code> 为 <code>1</code>，则说明该 <code>zval</code> 是通过引用传递的；如果 <code>is_ref</code> 为 <code>0</code>，则说明该 <code>zval</code> 是一个普通变量。</p>
+<p>在 PHP 中，引用是通过 <code>&amp;</code> 操作符实现的。例如，<code>$b = &amp;$a;</code>，此时 <code>$b</code> 是 <code>$a</code> 的引用，因此 <code>b</code> 的 <code>zval</code> 会将 <code>is_ref</code> 标志设置为 <code>1</code>。</p>
+<p>  <strong><code>refcount</code>（引用计数）</strong>：</p>
+<p><code>refcount</code> 是一个无符号整数，表示有多少个引用指向当前 <code>zval</code>（指向<code>zval</code>变量容器的变量个数）。也就是说，<code>refcount</code> 记录着有多少变量或引用使用了该 <code>zval</code>。</p>
+<p>每当有一个新的引用指向该 <code>zval</code> 时，<code>refcount</code> 会递增。当 <code>refcount</code> 减为零时，PHP 会释放这个 <code>zval</code> 所占用的内存。</p>
+<figure class="highlight php"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span> = <span class="string">"new string"</span>; </span><br><span class="line"><span class="title function_ invoke__">xdebug_debug_zval</span>(<span class="string">'a'</span>); <span class="comment">//用于查看变量a的zval变量容器的内容</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>来看这个例子</p>
+<p>这里定义了一个变量<code>$a</code>，生成了类型为<code>String</code>和值为<code>new string</code>的变量容器，而对于两个额外的字节，<code>is_ref</code>和<code>refcount</code>，我们这里可以看到是不存在引用的，所以<code>is_ref</code>的值应该是false，而<code>refcount</code>是表示变量个数的，那么这里就应该是1，接下来我们验证一下</p>
+<p>（这里要看你的php有没有装Xdebug <a target="_blank" rel="noopener" href="https://xdebug.org/wizard">Xdebug：支持 — 量身定制的安装说明</a>  这个非常好用 把你的phpinfo内容粘贴进去就有教程了）</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250927141738971.png" alt="image-20250927141738577"></p>
+<p>下面我们添加 一个引用</p>
+<figure class="highlight php"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span> = <span class="string">"new string"</span>; </span><br><span class="line"><span class="variable">$b</span>=&amp;<span class="variable">$a</span>;</span><br><span class="line"><span class="title function_ invoke__">xdebug_debug_zval</span>(<span class="string">'a'</span>); <span class="comment">//用于查看变量a的zval变量容器的内容</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>在我们的思考中 每生成一个变量就有一个<code>zval</code>记录其类型和值以及两个额外字节，那我们这里的话a的<code>refcount</code>应该是1，<code>is_ref</code>应该是<code>true</code></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250927142024102.png" alt="image-20250927142024040"></p>
+<p>结果这里是2 因为同一变量容器被变量a和变量b关联，当没必要时,php不会去复制已生成的变量容器。<br>所以这一个<code>zval</code>容器存储了<code>a</code>和<code>b</code>两个变量，就使得<code>refcount</code>的值为2.</p>
+<p>知道这个容器是怎么生成的 那么他的销毁</p>
+<p>变量容器在<code>refcount</code>变成0时就被销毁。它这个值是如何减少的呢，当函数执行结束或者对变量调用了unset()函数,<code>refcount</code>就会减1。</p>
+<figure class="highlight php"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span> = <span class="string">"new string"</span>;    <span class="comment">// 创建一个字符串变量 $a</span></span><br><span class="line"><span class="variable">$b</span> =&amp; <span class="variable">$a</span>;             <span class="comment">// $b 通过引用赋值给 $a，即 $b 和 $a 引用相同的内存位置</span></span><br><span class="line"><span class="variable">$c</span> =&amp; <span class="variable">$b</span>;             <span class="comment">// $c 通过引用赋值给 $b，即 $c 和 $b 引用相同的内存位置</span></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">xdebug_debug_zval</span>(<span class="string">'a'</span>);  <span class="comment">// 输出 $a 的引用计数和引用信息</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">unset</span>(<span class="variable">$b</span>, <span class="variable">$c</span>);          <span class="comment">// 删除变量 $b 和 $c，解除引用关系</span></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">xdebug_debug_zval</span>(<span class="string">'a'</span>);  <span class="comment">// 再次输出 $a 的引用计数和引用信息</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250927143128631.png" alt="image-20250927143128552"></p>
+<p>我这里和文章上出现的结果是不一样的</p>
+<p>具体原因可能是版本差异</p>
+<p>不过这个is_ref他反应的应该是变量曾经是否被引用过</p>
+<p>所以这里是1应该也没问题</p>
+<p>总之我们看到refcount数量变成了1才是比较关键的</p>
+<h2 id="GC在PHP-反序列化中的利用"><a href="#GC在PHP-反序列化中的利用" class="headerlink" title="GC在PHP 反序列化中的利用"></a>GC在PHP 反序列化中的利用</h2><p><code>GC</code>如果在PHP反序列化中生效，那它就会直接触发<code>_destruct</code>方法</p>
+<p>可以看一下这个demo示例</p>
+<figure class="highlight php"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>); </span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>); </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">test</span></span>{ </span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$num</span>; </span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$num</span></span>) </span>{</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;num = <span class="variable">$num</span>; <span class="keyword">echo</span> <span class="variable language_">$this</span>-&gt;num.<span class="string">"__construct"</span>.<span class="string">"&lt;/br&gt;"</span>; </span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>{</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable language_">$this</span>-&gt;num.<span class="string">"__destruct()"</span>.<span class="string">"&lt;/br&gt;"</span>; </span><br><span class="line">    }</span><br><span class="line">    }</span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> <span class="title function_ invoke__">test</span>(<span class="number">1</span>); </span><br><span class="line"><span class="keyword">unset</span>(<span class="variable">$a</span>);</span><br><span class="line"><span class="variable">$b</span> = <span class="keyword">new</span> <span class="title function_ invoke__">test</span>(<span class="number">2</span>); </span><br><span class="line"><span class="variable">$c</span> = <span class="keyword">new</span> <span class="title function_ invoke__">test</span>(<span class="number">3</span>);</span><br></pre></td></tr></tbody></table></figure>
+
+<p>当使用 <code>new</code> 关键字创建一个类的实例时，构造函数 <code>__construct</code> 会被自动调用。</p>
+<p>在代码中，<code>$a = new test(1);</code> 会调用 <code>test</code> 类的构造函数，输出 <code>1__construct</code>。</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250927151118727.png" alt="image-20250927151118619"></p>
+<p>析构函数 <code>__destruct</code> 在对象被销毁时自动调用。对象的销毁时机通常有两种情况：</p>
+<p>脚本执行结束时，会自动销毁所有创建的对象，按对象创建的逆序调用析构函数。</p>
+<p>当使用 <code>unset</code> 函数销毁对象时，会立即调用该对象的析构函数。</p>
+<p><code>unset($a);</code> 销毁了 <code>$a</code> 这个对象，所以会立即调用 <code>$a</code> 对应的 <code>test</code> 类实例的析构函数，输出 <code>1__destruct()</code>。</p>
+<p>另一种方法</p>
+<p>核心是<strong>让对象在反序列化过程中提前变为 “无引用状态”（类似被赋值为 NULL），从而触发<code>__destruct</code>析构函数</strong></p>
+<p>当对象的引用计数归零时（没有任何变量引用它），PHP 会立即回收该对象并调用<code>__destruct</code>。“赋值为 NULL” 只是让引用计数归 0 的一种方式。</p>
+<p>我们反序列化一个数组 第一个索引为对象 第二个元素使用与第一个元素相同的索引</p>
+<p>比如</p>
+<figure class="highlight php"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 序列化前的数组（逻辑上）</span></span><br><span class="line"><span class="variable">$arr</span> = [</span><br><span class="line">  <span class="number">0</span> =&gt; <span class="keyword">new</span> <span class="title function_ invoke__">B</span>(),  <span class="comment">// 第一个元素：索引0对应B对象</span></span><br><span class="line">  <span class="number">0</span> =&gt; <span class="number">0</span>         <span class="comment">// 第二个元素：索引0对应整数0（覆盖第一个元素）</span></span><br><span class="line">];</span><br></pre></td></tr></tbody></table></figure>
+
+<p>当反序列化这个数组时，PHP 会按顺序解析：</p>
+<p>先解析第一个元素：创建<code>B</code>对象，存入索引<code>0</code>（此时<code>B</code>对象的引用计数 = 1）</p>
+<p>再解析第二个元素：发现索引也是<code>0</code>，于是用整数<code>0</code>覆盖了原来的<code>B</code>对象（数组中相同索引会被后出现的元素覆盖）</p>
+<p>覆盖后，<code>B</code>对象不再被任何变量引用（引用计数 = 0），触发垃圾回收，进而调用<code>__destruct</code></p>
+<p>原本<code>B</code>对象被数组的索引<code>0</code>引用（有一个引用）</p>
+<p>当相同索引的元素被覆盖后，<code>B</code>对象的所有引用都消失了（引用计数从 1 变为 0）</p>
+<p>PHP 的垃圾回收器会实时检测到 “引用计数为 0” 的对象，将其标记为垃圾并立即回收</p>
+<p>回收时必然会调用对象的<code>__destruct</code>方法，无论后续是否有异常抛出</p>
+<p>下面尝试一下下</p>
+<figure class="highlight php"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">show_source</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="variable">$flag</span> = <span class="string">"flag"</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> </span>{</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>) </span>{</span><br><span class="line">    <span class="keyword">global</span> <span class="variable">$flag</span>;</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line"><span class="variable">$a</span> = <span class="title function_ invoke__">unserialize</span>(<span class="variable">$_GET</span>[<span class="string">'1'</span>]);</span><br><span class="line"><span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Exception</span>(<span class="string">'你想干什么'</span>);</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250927160952643.png" alt="image-20250927160952265"></p>
+<p>我们发现在这里反序列化之后就触发异常了</p>
+<p>所以按照正常的方法我们没法触发_destruct</p>
+<p>我们再反序列化一个数组</p>
+<figure class="highlight php"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">show_source</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> </span>{</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>) </span>{</span><br><span class="line">    <span class="keyword">global</span> <span class="variable">$flag</span>;</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line"><span class="variable">$a</span>=<span class="keyword">array</span>(<span class="keyword">new</span> B,<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">serialize</span>(<span class="variable">$a</span>);</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250927162538724.png" alt="image-20250927162538540"></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20250927162824753.png" alt="image-20250927162824622"></p>
+<p>把第二个索引改为0</p>
+<p>当 <code>B</code> 类对象被整数 <code>0</code> 覆盖后，原本指向 <code>B</code> 类对象的引用就不存在了，<code>B</code> 类对象的<strong>引用计数变为 0</strong>。PHP 的垃圾回收机制会检测到引用计数为 0 的对象，将其视为垃圾进行回收。</p>
+<p>成功看到flag</p>
+<h2 id="GC在phar反序列化中的利用"><a href="#GC在phar反序列化中的利用" class="headerlink" title="GC在phar反序列化中的利用"></a>GC在phar反序列化中的利用</h2><p>其实差不多都是一样的</p>
+<p>不过在这里</p>
+<p>phar文件中的i:0是不能随便修改的</p>
+<p>改了会因为签名错误而导致文件出错 但是签名可以进行伪造</p>
+<p>利用下面的脚本使签名正确</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gzip</span><br><span class="line"><span class="keyword">from</span> hashlib <span class="keyword">import</span> sha1</span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">'D:\\phpStudy\\PHPTutorial\\WWW\html\\1.phar'</span>, <span class="string">'rb'</span>) <span class="keyword">as</span> file:</span><br><span class="line">    f = file.read() </span><br><span class="line">s = f[:-<span class="number">28</span>] <span class="comment"># 获取要签名的数据</span></span><br><span class="line">h = f[-<span class="number">8</span>:] <span class="comment"># 获取签名类型以及GBMB标识</span></span><br><span class="line">newf = s + sha1(s).digest() + h <span class="comment"># 数据 + 签名 + (类型 + GBMB)</span></span><br><span class="line"><span class="built_in">open</span>(<span class="string">"2.phar"</span>,<span class="string">"wb"</span>).write(newf)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>路径记得修改一下</p>
+<p>直接运行生成一个新的可用的phar文件</p>
+<p>然后伪协议读取就可以了</p>
+<p>基本的知识点就学完了</p>
+<p>newstar2023第四周有道题目就是这个</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://xiubi1125.github.io">xiubi</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://xiubi1125.github.io/2025/09/27/%E2%80%9CPHP%E4%B8%AD%E7%9A%84GC%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E4%B8%8E%E4%BE%8B%E9%A2%98%E2%80%9D/">https://xiubi1125.github.io/2025/09/27/%E2%80%9CPHP%E4%B8%AD%E7%9A%84GC%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E4%B8%8E%E4%BE%8B%E9%A2%98%E2%80%9D/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://xiubi1125.github.io" target="_blank">休比大王</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/GC.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer=""></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/09/22/php%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%94phar%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/" title="php学习——phar反序列化学习"><img class="cover" src="/img/php.jpg" onerror="onerror=null;src='/img/yu.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">php学习——phar反序列化学习</div></div><div class="info-2"><div class="info-item-1">之前学反序列化的时候没有仔细看 只简单做了下题 有时间了回头再写一下  phar反序列化相关知识Phar 反序列化漏洞是一个 PHP 中的常见安全问题，它通常出现在处理 .phar 文件时。.phar 文件本质上是一种压缩文件，它将多个文件封装成一个文件，并允许对其中的内容进行读取和写入。在 phar 文件中，用户自定义的 meta-data（元数据）通常是通过 PHP 的序列化机制存储的。 phar是将php文件打包而成的一种压缩文档，类似于Java中的jar包。它有一个特性就是phar文件会以序列化的形式储存用户自定义的meta-data。以扩展反序列化漏洞的攻击面，配合phar://协议使用。 对于 PHP 5.3 或更高版本，phar后缀文件时默认开启支持的，可以直接使用 一般使用文件包含中的**phar伪协议进行读取.phar文件** phar文件结构 Stub（启动文件）  这是phar文件标识，格式为xxx&lt;?php xxx;__HALT_COMPILER();?&gt;（头部信息），这是 PHAR 文件的入口点，当 PHP 解释器加载 PHAR...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/tx.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="avatar"></div><div class="author-info-name">xiubi</div><div class="author-info-description">或许最低落笔峰都能与光相逢</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">小小的不如意是在为大大的幸福做铺垫ദ്ദി˶ᕑᗢᓫ)✧</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#PHP%E4%B8%AD%E7%9A%84GC%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6"><span class="toc-number">1.</span> <span class="toc-text">PHP中的GC垃圾回收机制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFGC"><span class="toc-number">1.1.</span> <span class="toc-text">什么是GC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0"><span class="toc-number">1.1.1.</span> <span class="toc-text">引用计数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#zval-%E5%AE%B9%E5%99%A8"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">zval 容器</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GC%E5%9C%A8PHP-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%AD%E7%9A%84%E5%88%A9%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">GC在PHP 反序列化中的利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GC%E5%9C%A8phar%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%AD%E7%9A%84%E5%88%A9%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">GC在phar反序列化中的利用</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/09/27/%E2%80%9CPHP%E4%B8%AD%E7%9A%84GC%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E4%B8%8E%E4%BE%8B%E9%A2%98%E2%80%9D/" title="“PHP中的GC垃圾回收机制”"><img src="/img/GC.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="“PHP中的GC垃圾回收机制”"></a><div class="content"><a class="title" href="/2025/09/27/%E2%80%9CPHP%E4%B8%AD%E7%9A%84GC%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E4%B8%8E%E4%BE%8B%E9%A2%98%E2%80%9D/" title="“PHP中的GC垃圾回收机制”">“PHP中的GC垃圾回收机制”</a><time datetime="2025-09-27T06:58:46.081Z" title="发表于 2025-09-27 14:58:46">2025-09-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/22/php%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%94phar%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/" title="php学习——phar反序列化学习"><img src="/img/php.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="php学习——phar反序列化学习"></a><div class="content"><a class="title" href="/2025/09/22/php%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%94phar%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/" title="php学习——phar反序列化学习">php学习——phar反序列化学习</a><time datetime="2025-09-22T12:48:26.118Z" title="发表于 2025-09-22 20:48:26">2025-09-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/22/%E2%80%9C%5BNewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93%5DWEEK4--web%E6%96%B9%E5%90%91%E5%A4%8D%E7%8E%B0%E8%AE%B0%E5%BD%95%E2%80%9D/" title="“[NewStarCTF 2023 公开赛道]WEEK4--web方向复现记录”"><img src="/img/newstar4.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="“[NewStarCTF 2023 公开赛道]WEEK4--web方向复现记录”"></a><div class="content"><a class="title" href="/2025/09/22/%E2%80%9C%5BNewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93%5DWEEK4--web%E6%96%B9%E5%90%91%E5%A4%8D%E7%8E%B0%E8%AE%B0%E5%BD%95%E2%80%9D/" title="“[NewStarCTF 2023 公开赛道]WEEK4--web方向复现记录”">“[NewStarCTF 2023 公开赛道]WEEK4--web方向复现记录”</a><time datetime="2025-09-22T12:36:53.538Z" title="发表于 2025-09-22 20:36:53">2025-09-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/16/%E2%80%9C%5BNewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93%5DWEEK3--web%E6%96%B9%E5%90%91%E5%A4%8D%E7%8E%B0%E8%AE%B0%E5%BD%95%E2%80%9D/" title="“[NewStarCTF 2023 公开赛道]WEEK3--web方向复现记录”"><img src="/img/newsta3.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="“[NewStarCTF 2023 公开赛道]WEEK3--web方向复现记录”"></a><div class="content"><a class="title" href="/2025/09/16/%E2%80%9C%5BNewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93%5DWEEK3--web%E6%96%B9%E5%90%91%E5%A4%8D%E7%8E%B0%E8%AE%B0%E5%BD%95%E2%80%9D/" title="“[NewStarCTF 2023 公开赛道]WEEK3--web方向复现记录”">“[NewStarCTF 2023 公开赛道]WEEK3--web方向复现记录”</a><time datetime="2025-09-16T13:02:50.749Z" title="发表于 2025-09-16 21:02:50">2025-09-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/16/%E6%94%BB%E9%98%B2%E7%BB%83%E4%B9%A0%E4%B9%8Bssh%E7%A7%81%E9%92%A5%E6%B3%84%E9%9C%B2/" title="ssh私钥泄露靶场"><img src="/img/ssh.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="ssh私钥泄露靶场"></a><div class="content"><a class="title" href="/2025/09/16/%E6%94%BB%E9%98%B2%E7%BB%83%E4%B9%A0%E4%B9%8Bssh%E7%A7%81%E9%92%A5%E6%B3%84%E9%9C%B2/" title="ssh私钥泄露靶场">ssh私钥泄露靶场</a><time datetime="2025-09-16T10:19:31.274Z" title="发表于 2025-09-16 18:19:31">2025-09-16</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent;"><div id="footer-wrap"><div class="copyright">©2019 - 2025 By xiubi</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.5</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><canvas id="snow"></canvas><script src="/js/font.js</script)<script"></script><script async="" src="/js/title.js"></script><meting-js class="no-destroy" id="14171279957" server="netease" type="playlist" fixed="true" autoplay="true" order="random" volume="0.3" list-folded="false" list-max-height="36vh"> </meting-js><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><link rel="stylesheet" href="https://npm.elemecdn.com/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://npm.elemecdn.com/aplayer/dist/APlayer.min.js"></script><script src="https://npm.elemecdn.com/meting/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      false 
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async="" data-pjax="" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
