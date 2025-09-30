@@ -6,7 +6,7 @@
   <link href="https://xiubi1125.github.io/atom.xml" rel="self"/>
   
   <link href="https://xiubi1125.github.io/"/>
-  <updated>2025-09-28T14:00:45.157Z</updated>
+  <updated>2025-09-30T02:13:46.097Z</updated>
   <id>https://xiubi1125.github.io/</id>
   
   <author>
@@ -17,20 +17,21 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>JavaScript 原型链污染</title>
+    <title>redis主从复制与[网鼎杯 2020 ]SSRFMe</title>
     <link href="https://xiubi1125.github.io/2025/09/28/JavaScript-%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/"/>
     <id>https://xiubi1125.github.io/2025/09/28/JavaScript-%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/</id>
     <published>2025-09-28T09:49:16.470Z</published>
-    <updated>2025-09-28T14:00:45.157Z</updated>
+    <updated>2025-09-30T02:13:46.097Z</updated>
     
-    <content type="html"><![CDATA[<p>做题碰到了两道这类题 了解一下</p><hr><h1 id="JavaScript-原型链污染"><a href="#JavaScript-原型链污染" class="headerlink" title="JavaScript 原型链污染"></a>JavaScript 原型链污染</h1><h2 id="JavaScript-类"><a href="#JavaScript-类" class="headerlink" title="JavaScript 类"></a>JavaScript 类</h2>]]></content>
+    <content type="html"><![CDATA[<p>做题碰到了两道这类题 了解一下</p><p>在之前学的时候没有仔细去看这个 补一下</p><hr><h1 id="网鼎杯-2020-玄武组-SSRFMe与redis主从复制"><a href="#网鼎杯-2020-玄武组-SSRFMe与redis主从复制" class="headerlink" title="[网鼎杯 2020 玄武组]SSRFMe与redis主从复制"></a>[网鼎杯 2020 玄武组]SSRFMe与redis主从复制</h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>Redis 主从复制是一种数据复制机制</p>]]></content>
     
     
       
       
     <summary type="html">&lt;p&gt;做题碰到了两道这类题 了解一下&lt;/p&gt;
+&lt;p&gt;在之前学的时候没有仔细去看这个 补一下&lt;/p&gt;
 &lt;hr&gt;
-&lt;h1 id=&quot;JavaScript-原型链污染&quot;&gt;&lt;a href=&quot;#JavaScript-原型链污染&quot; class=&quot;headerlink&quot; title=&quot;JavaScript 原型链污染&quot;&gt;&lt;/a&gt;JavaScript</summary>
+&lt;h1 id=&quot;网鼎杯-2020-玄武组-SSRFMe与redis主从复制&quot;&gt;&lt;a href=&quot;#网鼎杯-2020-玄武组-SSRFMe与redis主从复制&quot; class</summary>
       
     
     
