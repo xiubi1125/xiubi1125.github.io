@@ -18,3 +18,49 @@
 	/* ���´���͸����Ϊ0.7 */
 	background: rgba(255,255,255, .0);
 }
+/* ȫ��Ĭ�����ָ�� */
+body,
+html {
+    cursor: url('./mouse/sb.cur'), auto !important;
+}
+?
+/* ��ͣͼƬʱ�����ָ�� */
+img {
+    
+    cursor: url('./mouse/sb.cur'), auto !important;
+}
+?
+/* ѡ�����ӱ�ǩʱ�����ָ�� */
+a:hover {
+    cursor: url('./mouse/sb.cur'), auto;
+}
+?
+/* ѡ�������ʱ�����ָ�� */
+input:hover {
+    cursor: url('ָ����ʽcur�ļ�·��'), auto;
+}
+?
+/* ��ͣ��ťʱ�����ָ�� */
+button:hover {
+    cursor: url('ָ����ʽcur�ļ�·��'), auto;
+}
+?
+/* ��ͣ�б���ǩʱ�����ָ�� */
+i:hover {
+    cursor: url('ָ����ʽcur�ļ�·��'), auto;
+}
+?
+/* ��ͣҳ�����ӱ�ǩ������ҳ�Żձ꣩ʱ�����ָ�� */
+#footer-wrap a:hover {
+    cursor: url('ָ����ʽcur�ļ�·��'), auto;
+}
+?
+/* ��ͣҳ��ʱ�����ָ�� */
+#pagination .page-number:hover {
+    cursor: url('ָ����ʽcur�ļ�·��'), auto;
+}
+?
+/* ��ͣ�˵���ʱ�����ָ�� */
+#nav .site-page:hover {
+    cursor: url('ָ����ʽcur�ļ�·��'), auto;
+}
