@@ -1,0 +1,495 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Java-反射及原生序列化和反序列化 | 休比大王</title><meta name="author" content="xiubi"><meta name="copyright" content="xiubi"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="但听凭轮回造物一半勾留一半掩埋">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java-反射及原生序列化和反序列化">
+<meta property="og:url" content="https://xiubi1125.github.io/2026/03/12/Java-%E5%8F%8D%E5%B0%84%E5%8F%8A%E5%8E%9F%E7%94%9F%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
+<meta property="og:site_name" content="休比大王">
+<meta property="og:description" content="但听凭轮回造物一半勾留一半掩埋">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xiubi1125.github.io/img/java1.jpg">
+<meta property="article:published_time" content="2026-03-12T02:21:46.275Z">
+<meta property="article:modified_time" content="2026-03-26T10:27:24.392Z">
+<meta property="article:author" content="xiubi">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://xiubi1125.github.io/img/java1.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Java-反射及原生序列化和反序列化",
+  "url": "https://xiubi1125.github.io/2026/03/12/Java-%E5%8F%8D%E5%B0%84%E5%8F%8A%E5%8E%9F%E7%94%9F%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/",
+  "image": "https://xiubi1125.github.io/img/java1.jpg",
+  "datePublished": "2026-03-12T02:21:46.275Z",
+  "dateModified": "2026-03-26T10:27:24.392Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xiubi",
+      "url": "https://xiubi1125.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/dancing.png"><link rel="canonical" href="https://xiubi1125.github.io/2026/03/12/Java-%E5%8F%8D%E5%B0%84%E5%8F%8A%E5%8E%9F%E7%94%9F%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="//busuanzi.ibruce.info"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java-反射及原生序列化和反序列化',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/modify.css"><link rel="stylesheet" href="/css/1.css"><link rel="stylesheet" href="/css/2.css"><link rel="stylesheet" href="/css/3.css"><link rel="stylesheet" href="/css/4.css"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-butterfly-categories-card/lib/categorybar.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="休比大王" type="application/atom+xml">
+</head><body><div id="web_bg" style="background-image: url(/img/qz.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/tx.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="avatar"></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">25</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 老酒街</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw far fa-comments"></i><span> 夜雨</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/java1.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/dancing.png" alt="Logo"><span class="site-name">休比大王</span></a><a class="nav-page-title" href="/"><span class="site-name">Java-反射及原生序列化和反序列化</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 老酒街</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw far fa-comments"></i><span> 夜雨</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Java-反射及原生序列化和反序列化</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-12T02:21:46.275Z" title="发表于 2026-03-12 10:21:46">2026-03-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-03-26T10:27:24.392Z" title="更新于 2026-03-26 18:27:24">2026-03-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/jaaaavvvvaaaa/">jaaaavvvvaaaa</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><div class="top-img" style="background-image: url(/img/java1.jpg);"></div><article class="container post-content" id="article-container"><h1 id="Java-反射及原生序列化和反序列化"><a href="#Java-反射及原生序列化和反序列化" class="headerlink" title="Java-反射及原生序列化和反序列化"></a>Java-反射及原生序列化和反序列化</h1><h2 id="Java-反射"><a href="#Java-反射" class="headerlink" title="Java 反射"></a>Java 反射</h2><p>核心就是</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">用字符串决定</span><br><span class="line">调用哪个类</span><br><span class="line">执行哪个方法</span><br></pre></td></tr></tbody></table></figure>
+
+<p>比如说</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">execute</span><span class="params">(String Dog, String bark)</span> <span class="keyword">throws</span> Exception {</span><br><span class="line"><span class="type">Class</span> <span class="variable">a</span> <span class="operator">=</span> Class.forName(Dog);<span class="comment">//根据名字找到类</span></span><br><span class="line">a.getMethod(bark).invoke(a.newInstance());</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>几个在反射里里极为重要的方法：</p>
+<blockquote>
+<p>获取类的⽅方法： forName </p>
+<p>实例例化类对象的方法： newInstance </p>
+<p>获取函数的方法： getMethod </p>
+<p>执行函数的方法： invoke </p>
+</blockquote>
+<p>基本上，这几个方法包揽了了Java安全里各种和反射有关的Payload。</p>
+<p>另外<code>newInstance()</code> 在 <strong>Java 9 之后已经不推荐使用</strong>。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a.getDeclaredConstructor().newInstance();</span><br></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class a = Class.forName("Dog");</span><br><span class="line">Object obj = a.getDeclaredConstructor().newInstance();</span><br></pre></td></tr></tbody></table></figure>
+
+<p>如果攻击者能控制 Java 代码执行：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Runtime.getRuntime().exec("命令")</span><br></pre></td></tr></tbody></table></figure>
+
+<p>就可以进行命令执行了</p>
+<p>除了 Runtime，还有一个类ProcessBuilder</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ProcessBuilder pb = new ProcessBuilder("calc");</span><br><span class="line">pb.start();</span><br></pre></td></tr></tbody></table></figure>
+
+<p>常见的还是runtime</p>
+<h3 id="获取类的其他方式"><a href="#获取类的其他方式" class="headerlink" title="获取类的其他方式"></a>获取类的其他方式</h3><h4 id="obj-getClass"><a href="#obj-getClass" class="headerlink" title="obj.getClass()"></a>obj.getClass()</h4><p>前提是已经有一个对象 </p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Dog d = new Dog();</span><br></pre></td></tr></tbody></table></figure>
+
+<p>之后就可以</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class c = d.getClass();</span><br></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">d.getClass() = Dog.class</span><br></pre></td></tr></tbody></table></figure>
+
+<h4 id="类名-class"><a href="#类名-class" class="headerlink" title="类名.class"></a>类名.class</h4><p>前提是已经知道这个类了</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class c = Dog.class;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>直接获取 Dog </p>
+<p>类的 Class 对象</p>
+<p>不过这种方法不属于反射 因为你编译的时候就已经知道类了</p>
+<h4 id="Class-forName"><a href="#Class-forName" class="headerlink" title="Class.forName()"></a>Class.forName()</h4><p>只有字符串类名</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class c = Class.forName("Dog");</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这是真正的反射常用方法</p>
+<p> 类名是动态的</p>
+<h3 id="函数重载"><a href="#函数重载" class="headerlink" title="函数重载"></a>函数重载</h3><p>Java 的 <code>Class.forName</code> 有两个函数重载（就是同名函数但参数不一样）：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;?&gt; forName(String name)</span><br><span class="line">Class&lt;?&gt; forName(String name, boolean initialize, ClassLoader loader)</span><br></pre></td></tr></tbody></table></figure>
+
+<ul>
+<li><strong>第一个</strong>：我们最常用，直接写类名就行。</li>
+<li><strong>第二个</strong>：更底层、更灵活，可以控制 <strong>是否初始化</strong> 和 <strong>用哪个 ClassLoader 来加载</strong>。</li>
+</ul>
+<p>为什么第一个可以理解为第二个的封装</p>
+<p>第一个内部大概</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class.forName(className, true, 当前ClassLoader)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>className<code>→ 你想要的类名字，比如</code>“java.lang.Runtime”</p>
+<p><code>true</code> → 表示 <strong>要初始化类</strong></p>
+<p><code>当前ClassLoader</code> → JVM 默认的类加载器</p>
+<h4 id="参数解释"><a href="#参数解释" class="headerlink" title="参数解释"></a>参数解释</h4><p>第一个是类名</p>
+<p>第二个参数决定了类是否被初始化</p>
+<p><strong>初始化</strong>指的是：</p>
+<ul>
+<li>静态变量赋值</li>
+<li>静态代码块执行</li>
+</ul>
+<p>eg</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class Test {</span><br><span class="line">    static {</span><br><span class="line">        System.out.println("Test类初始化了！");</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class.forName("Test", true, loader);  // 输出: Test类初始化了！</span><br><span class="line">Class.forName("Test", false, loader); // 没输出，类没有初始化</span><br></pre></td></tr></tbody></table></figure>
+
+<p>其实是加载类后要不要初始化类而不是要不要加载类</p>
+<p>第三个参数是一个加载器</p>
+<p>告诉 JVM 去哪里找这个类</p>
+<p>Java 默认的 ClassLoader 会去 classpath（Java类路径）找</p>
+<p>高级用法可以传自己写的 ClassLoader，比如从网络加载类、从 jar 文件动态加载等等</p>
+<p>安全研究里，很多漏洞就是利用 <strong>自定义 ClassLoader + forName</strong> 动态加载一些隐藏类</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class TrainPrint {</span><br><span class="line">    {</span><br><span class="line">        System.out.printf("Empty block initial %s\n", this.getClass());</span><br><span class="line">    }</span><br><span class="line">    static {</span><br><span class="line">        System.out.printf("Static initial %s\n", TrainPrint.class);</span><br><span class="line">    }</span><br><span class="line">    public TrainPrint() {</span><br><span class="line">        System.out.printf("Initial %s\n", this.getClass());</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这三个不同的初始化</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>写法</th>
+<th>什么时候执行</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>静态代码块</td>
+<td><code>static {}</code></td>
+<td><strong>类初始化时执行</strong></td>
+</tr>
+<tr>
+<td>普通代码块</td>
+<td><code>{}</code></td>
+<td><strong>每次创建对象时执行</strong></td>
+</tr>
+<tr>
+<td>构造函数</td>
+<td><code>public TrainPrint()</code></td>
+<td><strong>创建对象时执行</strong></td>
+</tr>
+</tbody></table>
+<p>首先调⽤用的是static {}，其次是{}，最后是构造函数。</p>
+<p> 如果我们是正常的调用一个类 那么</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import java.lang.Runtime;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>然后才能写：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Runtime r = Runtime.getRuntime();</span><br></pre></td></tr></tbody></table></figure>
+
+<p>反射不需要 import</p>
+<p>只要你知道 <strong>类的完整名字</strong>:包名+类名 就可以去加载</p>
+<h4 id="为什么源码里会出现"><a href="#为什么源码里会出现" class="headerlink" title="为什么源码里会出现 $"></a>为什么源码里会出现 <code>$</code></h4><p>很多 Java 类名里会看到 <code>$</code></p>
+<p>a$b大致意思就是b是在a里面class的</p>
+<p>因此可以这样加载：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class.forName("C1$C2");</span><br></pre></td></tr></tbody></table></figure>
+
+<h5 id="在安全研究里的意义"><a href="#在安全研究里的意义" class="headerlink" title="$ 在安全研究里的意义"></a><code>$</code> 在安全研究里的意义</h5><p>有些框架会过滤.</p>
+<p>那么这时候就可以用$来进行绕过</p>
+<p>所以像 <strong>Fastjson</strong> 在安全检查时会：</p>
+<blockquote>
+<p>把 $ 替换成 .</p>
+</blockquote>
+<p>避免绕过。</p>
+<h5 id="newInstance-函数"><a href="#newInstance-函数" class="headerlink" title="newInstance()函数"></a>newInstance()函数</h5><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clazz.newInstance();</span><br></pre></td></tr></tbody></table></figure>
+
+<p>用来调用类的无参构造函数 等价于</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new ClassName();</span><br></pre></td></tr></tbody></table></figure>
+
+<p>比如说</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">class Test {</span><br><span class="line">    public Test() {}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>就可以</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class.forName("Test").newInstance();</span><br></pre></td></tr></tbody></table></figure>
+
+<p>有时候在写漏洞利用方法的时候，我们会发现使用 newInstance 总是不成功，这时候原因可能是： </p>
+<ol>
+<li><blockquote>
+<p>你使用的类没有无参构造函数</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">class Test {</span><br><span class="line">    public Test(int a) {}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>Test类定义了一个<strong>带参数的构造方法</strong> <code>public Test(int a) {}</code>，但没有显式定义无参构造方法 `Test()</p>
+<p>当你定义了带参构造方法后，Java 编译器<strong>不会再自动生成默认的无参构造方法</strong>。而 <code>newInstance()</code> 方法在创建对象时，会强制调用类的无参构造方法。此时因为找不到这个方法，就会抛出异常，导致实例化失败</p>
+<p><strong>反射通过 <code>newInstance()</code> 创建对象时，严格要求类必须有 <code>public</code> 的无参构造方法；否则会因 “找不到可用的构造方法” 而失败</strong>。</p>
+<blockquote>
+<p>你使用的类构造函数是私有的</p>
+</blockquote>
+<p>这个比较好理解 </p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">class Test {</span><br><span class="line">    private Test() {}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h5 id="为什么-Runtime-不能-newInstance"><a href="#为什么-Runtime-不能-newInstance" class="headerlink" title="为什么 Runtime 不能 newInstance()"></a>为什么 <code>Runtime</code> 不能 <code>newInstance()</code></h5><p>在java的源码里 runtimed的构造方法是private</p>
+<p>所以说只有在这个类的内部才能使用这个方法</p>
+<p>尝试反射调用时候没有办法进入类内部</p>
+<p>当你用反射尝试创建实例时：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class clazz = Class.forName("java.lang.Runtime");</span><br><span class="line">clazz.newInstance();</span><br></pre></td></tr></tbody></table></figure>
+
+<ul>
+<li><code>newInstance()</code> 会尝试调用类的<strong>无参构造方法</strong>，但 <code>Runtime</code> 的无参构造是 <code>private</code> 的。</li>
+<li>反射默认无法访问 <code>private</code> 构造，所以会抛出异常。</li>
+</ul>
+<p>官方设计是这样获取的</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Runtime.getRuntime()</span><br></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Runtime r = Runtime.getRuntime();</span><br><span class="line">r.exec("id");</span><br></pre></td></tr></tbody></table></figure>
+
+<p>如果用反射 那么就是</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Class clazz = Class.forName("java.lang.Runtime");</span><br><span class="line"></span><br><span class="line">Object runtime = clazz</span><br><span class="line">        .getMethod("getRuntime")</span><br><span class="line">        .invoke(null);</span><br><span class="line"></span><br><span class="line">clazz</span><br><span class="line">    .getMethod("exec", String.class)</span><br><span class="line">    .invoke(runtime, "id");</span><br></pre></td></tr></tbody></table></figure>
+
+<p>简单来说就是</p>
+<p>必须：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Runtime.getRuntime()</span><br></pre></td></tr></tbody></table></figure>
+
+<p>不能：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new Runtime()</span><br></pre></td></tr></tbody></table></figure>
+
+<p>然后来看这个</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">"java.lang.Runtime"</span>);</span><br><span class="line"></span><br><span class="line">clazz.getMethod(<span class="string">"exec"</span>, String.class)</span><br><span class="line">     .invoke(</span><br><span class="line">         clazz.getMethod(<span class="string">"getRuntime"</span>).invoke(clazz),</span><br><span class="line">         <span class="string">"calc.exe"</span></span><br><span class="line">     );</span><br></pre></td></tr></tbody></table></figure>
+
+<p>其实这个代码最后执行的就是</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Runtime.getRuntime().exec("calc.exe");</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>对于getmethod</p>
+</blockquote>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260317203555570.png" alt="image-20260317203555455"></p>
+<p>漫谈里这段介绍比较容易懂</p>
+<blockquote>
+<p>对于invoke()</p>
+</blockquote>
+<p>作用就是去执行方法</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 获取 Runtime 类的 Class 对象（反射的“入口”）</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">"java.lang.Runtime"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 获取 Runtime 类的 exec 方法（用于执行系统命令）</span></span><br><span class="line"><span class="type">Method</span> <span class="variable">execMethod</span> <span class="operator">=</span> clazz.getMethod(<span class="string">"exec"</span>, String.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. 获取 Runtime 类的 getRuntime 静态方法（获取单例实例的官方入口）</span></span><br><span class="line"><span class="type">Method</span> <span class="variable">getRuntimeMethod</span> <span class="operator">=</span> clazz.getMethod(<span class="string">"getRuntime"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4. 调用 getRuntime 静态方法，拿到唯一的 Runtime 实例</span></span><br><span class="line"><span class="type">Object</span> <span class="variable">runtime</span> <span class="operator">=</span> getRuntimeMethod.invoke(clazz);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 5. 调用 Runtime 实例的 exec 方法，执行 calc.exe（打开计算器）</span></span><br><span class="line">execMethod.invoke(runtime, <span class="string">"calc.exe"</span>);</span><br></pre></td></tr></tbody></table></figure>
+
+
+
+<h5 id="没有无参构造函数如何实例化类"><a href="#没有无参构造函数如何实例化类" class="headerlink" title="没有无参构造函数如何实例化类"></a>没有无参构造函数如何实例化类</h5><p><code>newInstance()</code> <strong>只能调用无参构造方法</strong></p>
+<p>如果类 <strong>没有无参构造方法就会失败</strong></p>
+<p>那么我们就可以使用getconstructor来获取构造方法</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Class clazz = Class.forName("java.lang.ProcessBuilder");</span><br><span class="line"></span><br><span class="line">clazz.getConstructor(List.class)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这里表示获取：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ProcessBuilder(List&lt;String&gt;)</span><br></pre></td></tr></tbody></table></figure>
+
+<p><code>newInstance</code> 调用构造方法</p>
+<p>获取构造方法后：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Constructor.newInstance()</span><br></pre></td></tr></tbody></table></figure>
+
+<p>就等价于：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new ProcessBuilder(...)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>代码：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">clazz.getConstructor(List.class)</span><br><span class="line">     .newInstance(Arrays.asList("calc.exe"))</span><br></pre></td></tr></tbody></table></figure>
+
+<p>等价：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new ProcessBuilder(Arrays.asList("calc.exe"))</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="RMI"><a href="#RMI" class="headerlink" title="RMI"></a>RMI</h2><p>RMI是 Java 原生的<strong>远程方法调用机制</strong>，核心目标是：让运行在 JVM A 上的对象，像调用本地方法一样，调用运行在 JVM B 上的对象的方法。</p>
+<p>RMI的通信分为三个阶段</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260320110851369.png" alt="image-20260320110851316"></p>
+<p>RMI 的所有数据传输（方法名、参数、返回值）都依赖 Java 序列化：</p>
+<ul>
+<li>客户端：把要调用的方法名、参数序列化成字节流，通过网络发给服务端。</li>
+<li>服务端：反序列化字节流，执行方法，再把结果序列化返回。</li>
+</ul>
+<h4 id="RMIServer-java-服务端"><a href="#RMIServer-java-服务端" class="headerlink" title="RMIServer.java(服务端)"></a>RMIServer.java(服务端)</h4><figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.vulhub.RMI;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.rmi.Naming;</span><br><span class="line"><span class="keyword">import</span> java.rmi.Remote;</span><br><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"><span class="keyword">import</span> java.rmi.server.UnicastRemoteObject;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMIServer</span> {</span><br><span class="line">    <span class="comment">// 第一步：定义远程接口（必须继承Remote，所有方法抛RemoteException）</span></span><br><span class="line">    <span class="comment">// 底层逻辑：接口是客户端和服务端的“协议约定”，双方都知道能调用哪些方法</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">IRemoteHelloWorld</span> <span class="keyword">extends</span> <span class="title class_">Remote</span> {</span><br><span class="line">        String <span class="title function_">hello</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException; <span class="comment">// 远程方法必须抛RemoteException（网络异常）Remote 接口是标记接口（无方法），作用是告诉 JVM：这个接口的方法是 “远程方法”，需要走网络通信</span></span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第二步：实现远程接口（必须继承UnicastRemoteObject）</span></span><br><span class="line">    <span class="comment">// 底层逻辑：UnicastRemoteObject会自动生成Stub/Skeleton，处理网络通信</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">RemoteHelloWorld</span> <span class="keyword">extends</span> <span class="title class_">UnicastRemoteObject</span> <span class="keyword">implements</span> <span class="title class_">IRemoteHelloWorld</span> {</span><br><span class="line">        <span class="comment">// 构造方法必须抛RemoteException（父类构造要求）</span></span><br><span class="line">        <span class="keyword">protected</span> <span class="title function_">RemoteHelloWorld</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException {</span><br><span class="line">            <span class="built_in">super</span>();</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 实现远程方法（核心业务逻辑，运行在服务端）</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">hello</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException {</span><br><span class="line">            System.out.println(<span class="string">"客户端调用了hello()方法，来源IP："</span> + java.net.InetAddress.getLocalHost());</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"Hello world from RMI Server"</span>;</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第三步：启动服务端（创建注册中心、绑定对象）</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">start</span><span class="params">()</span> <span class="keyword">throws</span> Exception {</span><br><span class="line">        <span class="comment">// 1. 创建RMI注册中心，监听1099端口（底层：启动一个Socket服务，监听1099）</span></span><br><span class="line">        LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">        System.out.println(<span class="string">"RMI注册中心启动在1099端口"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 创建远程对象实例（真实处理方法调用的对象）</span></span><br><span class="line">        <span class="type">IRemoteHelloWorld</span> <span class="variable">helloService</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RemoteHelloWorld</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3. 绑定远程对象到注册中心（服务名：Hello，地址：本地1099）</span></span><br><span class="line">        <span class="comment">// 底层逻辑：把“Hello”和对象的Stub引用存入注册中心，供客户端查询</span></span><br><span class="line">        Naming.rebind(<span class="string">"rmi://127.0.0.1:1099/Hello"</span>, helloService);</span><br><span class="line">        System.out.println(<span class="string">"RMI服务端启动完成，绑定服务名：Hello"</span>);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception {</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">RMIServer</span>().start();</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>UnicastRemoteObject 是 RMI 的核心类，作用：<br>自动生成 Stub（客户端代理）和 Skeleton（服务端代理）；<br>处理 TCP 网络通信（默认随机端口）；<br>实现对象的远程导出（让对象能被远程访问）</p>
+<table>
+<thead>
+<tr>
+<th>远程接口</th>
+<th><code>IRemoteHelloWorld extends Remote</code></th>
+<th>定义<strong>客户端能调用的远程方法</strong>，是「客户端和服务端的协议」</th>
+<th>必须继承<code>java.rmi.Remote</code>，所有方法抛<code>RemoteException</code>（网络异常）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>接口实现类</td>
+<td><code>RemoteHelloWorld extends UnicastRemoteObject implements IRemoteHelloWorld</code></td>
+<td>实现远程方法的<strong>真实业务逻辑</strong>，运行在服务端</td>
+<td>必须继承<code>UnicastRemoteObject</code>（自动生成通信代理），构造方法抛<code>RemoteException</code></td>
+</tr>
+<tr>
+<td>主启动类</td>
+<td><code>start()</code>方法 +<code>main()</code></td>
+<td>启动 Registry、创建实现类实例、<strong>绑定对象到 Registry</strong></td>
+<td>用<code>LocateRegistry.createRegistry(1099)</code>启动注册中心，<code>Naming.rebind()</code>完成绑定</td>
+</tr>
+</tbody></table>
+<h4 id="TrainMain-java-客户端"><a href="#TrainMain-java-客户端" class="headerlink" title="TrainMain.java(客户端)"></a>TrainMain.java(客户端)</h4><figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.vulhub.Train;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.vulhub.RMI.RMIServer.IRemoteHelloWorld;</span><br><span class="line"><span class="keyword">import</span> java.rmi.Naming;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TrainMain</span> {</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception {</span><br><span class="line">        <span class="comment">// 第一步：从注册中心查找服务（底层：向1099端口发送查询请求，获取Stub对象）</span></span><br><span class="line">        <span class="type">IRemoteHelloWorld</span> <span class="variable">helloStub</span> <span class="operator">=</span> (IRemoteHelloWorld) Naming.lookup(<span class="string">"rmi://127.0.0.1:1099/Hello"</span>);</span><br><span class="line">        <span class="comment">//客户端向注册中心发送查询请求，获取远程对象的 Stub（代理），后续调用都是通过 Stub 完</span></span><br><span class="line">        <span class="comment">// 第二步：调用远程方法（底层：实际调用Stub的hello()，Stub序列化方法名并发送给服务端）</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">result</span> <span class="operator">=</span> helloStub.hello();</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 第三步：打印结果（服务端返回的序列化数据被Stub反序列化）</span></span><br><span class="line">        System.out.println(<span class="string">"从服务端获取的结果："</span> + result);</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+
+
+<h4 id="抓包的通信过程"><a href="#抓包的通信过程" class="headerlink" title="抓包的通信过程"></a>抓包的通信过程</h4></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://xiubi1125.github.io">xiubi</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://xiubi1125.github.io/2026/03/12/Java-%E5%8F%8D%E5%B0%84%E5%8F%8A%E5%8E%9F%E7%94%9F%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">https://xiubi1125.github.io/2026/03/12/Java-%E5%8F%8D%E5%B0%84%E5%8F%8A%E5%8E%9F%E7%94%9F%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://xiubi1125.github.io" target="_blank">休比大王</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/java1.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer=""></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/03/11/vue%E5%9F%BA%E7%A1%80/" title="vue2基础"><img class="cover" src="/img/vue2.jpg" onerror="onerror=null;src='/img/yu.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">vue2基础</div></div><div class="info-2"><div class="info-item-1">难绘旧梦重圆</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/tx.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="avatar"></div><div class="author-info-name">xiubi</div><div class="author-info-description">或许最低落笔峰都能与光相逢</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">25</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">小小的不如意是在为大大的幸福做铺垫ദ്ദി˶ᕑᗢᓫ)✧</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Java-%E5%8F%8D%E5%B0%84%E5%8F%8A%E5%8E%9F%E7%94%9F%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text">Java-反射及原生序列化和反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-%E5%8F%8D%E5%B0%84"><span class="toc-number">1.1.</span> <span class="toc-text">Java 反射</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%B1%BB%E7%9A%84%E5%85%B6%E4%BB%96%E6%96%B9%E5%BC%8F"><span class="toc-number">1.1.1.</span> <span class="toc-text">获取类的其他方式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#obj-getClass"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">obj.getClass()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B1%BB%E5%90%8D-class"><span class="toc-number">1.1.1.2.</span> <span class="toc-text">类名.class</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Class-forName"><span class="toc-number">1.1.1.3.</span> <span class="toc-text">Class.forName()</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD"><span class="toc-number">1.1.2.</span> <span class="toc-text">函数重载</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E8%A7%A3%E9%87%8A"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">参数解释</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%BA%90%E7%A0%81%E9%87%8C%E4%BC%9A%E5%87%BA%E7%8E%B0"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">为什么源码里会出现 $</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9C%A8%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6%E9%87%8C%E7%9A%84%E6%84%8F%E4%B9%89"><span class="toc-number">1.1.2.2.1.</span> <span class="toc-text">$ 在安全研究里的意义</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#newInstance-%E5%87%BD%E6%95%B0"><span class="toc-number">1.1.2.2.2.</span> <span class="toc-text">newInstance()函数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-Runtime-%E4%B8%8D%E8%83%BD-newInstance"><span class="toc-number">1.1.2.2.3.</span> <span class="toc-text">为什么 Runtime 不能 newInstance()</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B2%A1%E6%9C%89%E6%97%A0%E5%8F%82%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E5%A6%82%E4%BD%95%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%B1%BB"><span class="toc-number">1.1.2.2.4.</span> <span class="toc-text">没有无参构造函数如何实例化类</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RMI"><span class="toc-number">1.2.</span> <span class="toc-text">RMI</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#RMIServer-java-%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="toc-number">1.2.0.1.</span> <span class="toc-text">RMIServer.java(服务端)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TrainMain-java-%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="toc-number">1.2.0.2.</span> <span class="toc-text">TrainMain.java(客户端)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8A%93%E5%8C%85%E7%9A%84%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B"><span class="toc-number">1.2.0.3.</span> <span class="toc-text">抓包的通信过程</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/03/12/Java-%E5%8F%8D%E5%B0%84%E5%8F%8A%E5%8E%9F%E7%94%9F%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="Java-反射及原生序列化和反序列化"><img src="/img/java1.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="Java-反射及原生序列化和反序列化"></a><div class="content"><a class="title" href="/2026/03/12/Java-%E5%8F%8D%E5%B0%84%E5%8F%8A%E5%8E%9F%E7%94%9F%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="Java-反射及原生序列化和反序列化">Java-反射及原生序列化和反序列化</a><time datetime="2026-03-12T02:21:46.275Z" title="发表于 2026-03-12 10:21:46">2026-03-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/11/vue%E5%9F%BA%E7%A1%80/" title="vue2基础"><img src="/img/vue2.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="vue2基础"></a><div class="content"><a class="title" href="/2026/03/11/vue%E5%9F%BA%E7%A1%80/" title="vue2基础">vue2基础</a><time datetime="2026-03-10T16:00:00.000Z" title="发表于 2026-03-11 00:00:00">2026-03-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/02/13/SpringBoot/" title="SpringBoot"><img src="/img/spring.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="SpringBoot"></a><div class="content"><a class="title" href="/2026/02/13/SpringBoot/" title="SpringBoot">SpringBoot</a><time datetime="2026-02-13T03:16:22.442Z" title="发表于 2026-02-13 11:16:22">2026-02-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/21/XYCTF2025-Web%E6%96%B9%E5%90%91%E5%A4%8D%E7%8E%B0%E8%AE%B0%E5%BD%95/" title="XYCTF2025-Web方向复现记录"><img src="/img/xy.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="XYCTF2025-Web方向复现记录"></a><div class="content"><a class="title" href="/2025/11/21/XYCTF2025-Web%E6%96%B9%E5%90%91%E5%A4%8D%E7%8E%B0%E8%AE%B0%E5%BD%95/" title="XYCTF2025-Web方向复现记录">XYCTF2025-Web方向复现记录</a><time datetime="2025-11-21T01:44:48.193Z" title="发表于 2025-11-21 09:44:48">2025-11-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/18/Vulnhub%E9%9D%B6%E5%9C%BA-DC%E7%B3%BB%E5%88%97-DC_1/" title="Vulnhub靶场-DC系列-DC_1"><img src="/img/dc1.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="Vulnhub靶场-DC系列-DC_1"></a><div class="content"><a class="title" href="/2025/11/18/Vulnhub%E9%9D%B6%E5%9C%BA-DC%E7%B3%BB%E5%88%97-DC_1/" title="Vulnhub靶场-DC系列-DC_1">Vulnhub靶场-DC系列-DC_1</a><time datetime="2025-11-18T10:44:56.861Z" title="发表于 2025-11-18 18:44:56">2025-11-18</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent;"><div id="footer-wrap"><div class="copyright">©2019 - 2026 By xiubi</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.5</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><canvas id="snow"></canvas><script src="/js/font.js</script)<script"></script><script src="/js/jquery.js"></script><script async="" src="/js/title.js"></script><meting-js class="no-destroy" id="14171279957" server="netease" type="playlist" fixed="true" autoplay="true" order="random" volume="0.3" list-folded="false" list-max-height="36vh"> </meting-js><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><link rel="stylesheet" href="https://npm.elemecdn.com/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://npm.elemecdn.com/aplayer/dist/APlayer.min.js"></script><script src="https://npm.elemecdn.com/meting/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      false 
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async="" data-pjax="" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax="">
+    function butterfly_categories_card_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<style>li.categoryBar-list-item{width:32.3%;}.categoryBar-list{max-height: 190px;overflow:auto;}.categoryBar-list::-webkit-scrollbar{width:0!important}@media screen and (max-width: 650px){.categoryBar-list{max-height: 160px;}}</style><div class="recent-post-item" style="height:auto;width:100%;padding:0px;"><div id="categoryBar"><ul class="categoryBar-list"><li class="categoryBar-list-item" style="background:url(https://xiubi1125.github.io/img/ssti.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/一些复现/&quot;);" href="javascript:void(0);">一些复现</a><span class="categoryBar-list-count">5</span><span class="categoryBar-list-descr">被虐的那些年</span></li><li class="categoryBar-list-item" style="background:url(https://xiubi1125.github.io/img/ssti.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/jaaaavvvvaaaa/&quot;);" href="javascript:void(0);">jaaaavvvvaaaa</a><span class="categoryBar-list-count">2</span><span class="categoryBar-list-descr">比较碎的一些点</span></li><li class="categoryBar-list-item" style="background:url(https://xiubi1125.github.io/img/ssti.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/属于蓝雨的夏天/&quot;);" href="javascript:void(0);">属于蓝雨的夏天</a><span class="categoryBar-list-count">5</span><span class="categoryBar-list-descr">top10学习日记</span></li><li class="categoryBar-list-item" style="background:url(https://xiubi1125.github.io/img/ssti.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/靶场系列/&quot;);" href="javascript:void(0);">靶场系列</a><span class="categoryBar-list-count">4</span><span class="categoryBar-list-descr">谁给我作业放这了</span></li><li class="categoryBar-list-item" style="background:url(undefined);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/乱七八糟/&quot;);" href="javascript:void(0);">乱七八糟</a><span class="categoryBar-list-count">6</span><span class="categoryBar-list-descr"></span></li><li class="categoryBar-list-item" style="background:url(undefined);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/jvvvvaaaavvvv/&quot;);" href="javascript:void(0);">jvvvvaaaavvvv</a><span class="categoryBar-list-count">1</span><span class="categoryBar-list-descr"></span></li></ul></div></div>';
+      console.log('已挂载butterfly_categories_card')
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      }
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+    butterfly_categories_card_injector_config()
+    }
+  </script><!-- hexo injector body_end end --></body></html>
